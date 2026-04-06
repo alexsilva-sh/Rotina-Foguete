@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🚀 Rotina Foguete</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07071a;
+      --surface: rgba(255,255,255,0.04);
+      --surface2: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.1);
+      --alex: #4fc3f7;
+      --ket: #f48fb1;
+      --gold: #ffd700;
+      --green: #69f0ae;
+      --red: #ef5350;
+      --text: #e8e8f0;
+      --text-dim: #8888aa;
+      --r: 16px;
+      --r-sm: 10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,.9) 0%, transparent 1px),
+        radial-gradient(1px 1px at 22% 38%, rgba(255,255,255,.7) 0%, transparent 1px),
+        radial-gradient(1px 1px at 38% 18%, rgba(255,255,255,.8) 0%, transparent 1px),
+        radial-gradient(1px 1px at 52% 62%, rgba(255,255,255,.6) 0%, transparent 1px),
+        radial-gradient(1px 1px at 67% 28%, rgba(255,255,255,.9) 0%, transparent 1px),
+        radial-gradient(1px 1px at 81% 52%, rgba(255,255,255,.7) 0%, transparent 1px),
+        radial-gradient(1px 1px at 14% 72%, rgba(255,255,255,.8) 0%, transparent 1px),
+        radial-gradient(1px 1px at 28% 88%, rgba(255,255,255,.6) 0%, transparent 1px),
+        radial-gradient(1px 1px at 58% 82%, rgba(255,255,255,.9) 0%, transparent 1px),
+        radial-gradient(1px 1px at 92% 8%,  rgba(255,255,255,.7) 0%, transparent 1px),
+        radial-gradient(1px 1px at 4% 55%,  rgba(255,255,255,.5) 0%, transparent 1px),
+        radial-gradient(1px 1px at 73% 68%, rgba(255,255,255,.8) 0%, transparent 1px),
+        radial-gradient(1px 1px at 44% 44%, rgba(255,255,255,.6) 0%, transparent 1px),
+        radial-gradient(1px 1px at 18% 5%,  rgba(255,255,255,.9) 0%, transparent 1px),
+        radial-gradient(1px 1px at 96% 88%, rgba(255,255,255,.7) 0%, transparent 1px),
+        radial-gradient(1px 1px at 33% 55%, rgba(255,255,255,.5) 0%, transparent 1px),
+        radial-gradient(1px 1px at 76% 40%, rgba(255,255,255,.8) 0%, transparent 1px),
+        radial-gradient(2px 2px at 33% 65%, rgba(79,195,247,.7) 0%, transparent 1px),
+        radial-gradient(2px 2px at 63% 15%, rgba(244,143,177,.7) 0%, transparent 1px),
+        radial-gradient(2px 2px at 80% 95%, rgba(255,215,0,.5) 0%, transparent 1px),
+        radial-gradient(2px 2px at 5%  90%, rgba(105,240,174,.5) 0%, transparent 1px);
+      z-index: 0;
+    }
+    header, nav, main, .modal-overlay { position: relative; z-index: 1; }
+
+    /* ===== HEADER ===== */
+    header { padding: 18px 16px 10px; background: linear-gradient(180deg, rgba(79,195,247,.07) 0%, transparent 100%); }
+    .header-top { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto; }
+    header h1 { font-size: 1.75rem; font-weight: 900; background: linear-gradient(135deg, var(--alex) 0%, var(--ket) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .header-date { font-size: .78rem; color: var(--text-dim); margin-top: 2px; }
+    .manage-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text-dim); font-family: inherit; font-size: .85rem; font-weight: 700; padding: 8px 14px; cursor: pointer; transition: all .2s; }
+    .manage-btn:hover { border-color: rgba(255,255,255,.3); color: var(--text); }
+
+    /* ===== TABS ===== */
+    nav.tabs { display: flex; justify-content: center; gap: 6px; padding: 10px 16px 8px; position: sticky; top: 0; z-index: 50; background: rgba(7,7,26,.92); backdrop-filter: blur(14px); }
+    .tab-btn { padding: 8px 18px; border: 1px solid var(--border); border-radius: 50px; background: transparent; color: var(--text-dim); font-family: inherit; font-size: .85rem; font-weight: 800; cursor: pointer; transition: all .25s; white-space: nowrap; }
+    .tab-btn:hover { border-color: rgba(255,255,255,.2); color: var(--text); background: var(--surface); }
+    .tab-btn.active { background: linear-gradient(135deg, rgba(79,195,247,.2), rgba(244,143,177,.2)); border-color: rgba(255,255,255,.25); color: white; box-shadow: 0 0 20px rgba(79,195,247,.12); }
+
+    /* ===== MAIN ===== */
+    main.content { max-width: 900px; margin: 0 auto; padding: 16px 16px 80px; }
+
+    /* ===== DAY VIEW ===== */
+    .day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .day-grid { grid-template-columns: 1fr; } }
+    .person-col { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
+    .person-header { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+    .person-header.alex { background: linear-gradient(135deg, rgba(79,195,247,.22), rgba(79,195,247,.04)); border-bottom: 1px solid rgba(79,195,247,.2); }
+    .person-header.ket  { background: linear-gradient(135deg, rgba(244,143,177,.22), rgba(244,143,177,.04)); border-bottom: 1px solid rgba(244,143,177,.2); }
+    .person-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+    .person-col.alex .person-avatar { background: linear-gradient(135deg, var(--alex), #0288d1); }
+    .person-col.ket  .person-avatar { background: linear-gradient(135deg, var(--ket),  #c2185b); }
+    .person-name { font-size: 1.05rem; font-weight: 900; }
+    .person-col.alex .person-name { color: var(--alex); }
+    .person-col.ket  .person-name { color: var(--ket); }
+    .person-sub { font-size: .7rem; color: var(--text-dim); font-weight: 600; }
+    .task-list { flex: 1; padding: 6px 0; }
+    .task-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; cursor: pointer; transition: background .15s; border-bottom: 1px solid rgba(255,255,255,.04); user-select: none; }
+    .task-item:last-child { border-bottom: none; }
+    .task-item:hover { background: var(--surface2); }
+    .task-item.completed { opacity: .42; }
+    .task-item.completed .task-title { text-decoration: line-through; }
+    .task-check { width: 26px; height: 26px; border-radius: 7px; border: 2px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: .85rem; transition: all .18s; }
+    .person-col.alex .task-check         { border-color: var(--alex); color: white; }
+    .person-col.alex .task-check.checked { background: var(--alex); border-color: var(--alex); }
+    .person-col.ket  .task-check         { border-color: var(--ket); color: white; }
+    .person-col.ket  .task-check.checked { background: var(--ket);  border-color: var(--ket); }
+    .task-info { flex: 1; min-width: 0; }
+    .task-title { font-size: .88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .task-pts   { font-size: .68rem; color: var(--text-dim); font-weight: 600; }
+    .person-footer { padding: 14px 16px; border-top: 1px solid var(--border); text-align: center; }
+    .score-display { font-size: 2.1rem; font-weight: 900; line-height: 1; }
+    .person-col.alex .score-display { color: var(--alex); }
+    .person-col.ket  .score-display { color: var(--ket);  }
+    .score-label { font-size: .7rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+    .empty-state { padding: 28px 16px; text-align: center; color: var(--text-dim); font-size: .85rem; line-height: 1.6; }
+
+    /* ===== WEEK / MONTH ===== */
+    .period-summary { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; }
+    .period-header { display: grid; grid-template-columns: 1fr 80px 80px 80px; padding: 10px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+    .period-header .col-alex { color: var(--alex); text-align: center; }
+    .period-header .col-ket  { color: var(--ket);  text-align: center; }
+    .period-header .col-win  { text-align: center; }
+    .period-row { display: grid; grid-template-columns: 1fr 80px 80px 80px; padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,.04); align-items: center; transition: background .15s; }
+    .period-row:last-child { border-bottom: none; }
+    .period-row:hover { background: var(--surface2); }
+    .period-row.today { background: rgba(255,215,0,.05); border-left: 2px solid var(--gold); }
+    .period-row.future { opacity: .35; }
+    .period-row.total-row { background: var(--surface2); font-weight: 900; }
+    .day-info .day-name { font-weight: 800; font-size: .88rem; }
+    .day-info .day-date { font-size: .72rem; color: var(--text-dim); }
+    .period-pts { text-align: center; font-weight: 800; font-size: .92rem; }
+    .period-pts.alex { color: var(--alex); }
+    .period-pts.ket  { color: var(--ket);  }
+    .winner-badge { text-align: center; font-size: .82rem; font-weight: 700; }
+    .period-section-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .period-section-title h2 { font-size: .95rem; font-weight: 900; }
+    .period-section-title span { font-size: .78rem; color: var(--text-dim); }
+    .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .month-nav-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-weight: 700; padding: 6px 14px; cursor: pointer; transition: all .2s; }
+    .month-nav-btn:hover { background: var(--surface2); }
+    .month-title { font-size: 1rem; font-weight: 900; }
+    .month-mini-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .mini-card { border-radius: var(--r-sm); padding: 14px; text-align: center; }
+    .mini-card.alex-card { background: rgba(79,195,247,.1); border: 1px solid rgba(79,195,247,.2); }
+    .mini-card.ket-card  { background: rgba(244,143,177,.1); border: 1px solid rgba(244,143,177,.2); }
+    .mini-card-pts { font-size: 1.55rem; font-weight: 900; }
+    .mini-card.alex-card .mini-card-pts { color: var(--alex); }
+    .mini-card.ket-card  .mini-card-pts { color: var(--ket); }
+    .mini-card-sub { font-size: .7rem; color: var(--text-dim); font-weight: 700; margin-top: 2px; }
+
+    /* ===== WINNER / ROULETTE SECTION ===== */
+    .winner-section {
+      margin-top: 18px;
+      background: linear-gradient(135deg, rgba(255,215,0,.08), rgba(255,215,0,.03));
+      border: 1px solid rgba(255,215,0,.22);
+      border-radius: var(--r);
+      padding: 20px;
+      text-align: center;
+    }
+    .winner-section .ws-label { font-size: .72rem; color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .winner-section .ws-name  { font-size: 1.25rem; font-weight: 900; margin: 6px 0 4px; }
+    .winner-section .ws-pts   { font-size: .82rem; color: var(--text-dim); font-weight: 700; }
+    .spin-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border: none; border-radius: 50px;
+      background: linear-gradient(135deg, var(--gold), #ff8f00);
+      color: #07071a; font-family: inherit; font-size: .95rem; font-weight: 900;
+      cursor: pointer; margin-top: 14px; transition: all .2s;
+      box-shadow: 0 4px 20px rgba(255,215,0,.3);
+    }
+    .spin-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(255,215,0,.45); }
+    .spin-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .already-spun-section {
+      margin-top: 18px;
+      background: rgba(105,240,174,.06);
+      border: 1px solid rgba(105,240,174,.2);
+      border-radius: var(--r);
+      padding: 16px;
+      text-align: center;
+    }
+    .tie-section {
+      margin-top: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: .88rem;
+    }
+
+    /* ===== RANKING ===== */
+    .ranking-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    @media (max-width: 480px) { .ranking-cards { grid-template-columns: 1fr; } }
+    .rank-card { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); padding: 20px 16px; text-align: center; position: relative; overflow: hidden; }
+    .rank-card.alex::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--alex), transparent); }
+    .rank-card.ket::before  { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--ket),  transparent); }
+    .rank-avatar { width: 58px; height: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.55rem; margin: 0 auto 10px; }
+    .rank-card.alex .rank-avatar { background: linear-gradient(135deg, var(--alex), #0288d1); }
+    .rank-card.ket  .rank-avatar { background: linear-gradient(135deg, var(--ket),  #c2185b); }
+    .rank-name { font-size: 1.05rem; font-weight: 900; margin-bottom: 4px; }
+    .rank-card.alex .rank-name { color: var(--alex); }
+    .rank-card.ket  .rank-name { color: var(--ket);  }
+    .rank-level { font-size: .72rem; background: var(--surface2); border-radius: 20px; padding: 3px 10px; display: inline-block; margin-bottom: 4px; font-weight: 700; }
+    .rank-total { font-size: 2.4rem; font-weight: 900; line-height: 1.1; }
+    .rank-card.alex .rank-total { color: var(--alex); }
+    .rank-card.ket  .rank-total { color: var(--ket);  }
+    .rank-total-label { font-size: .68rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px; }
+    .level-bar-wrap { background: rgba(255,255,255,.06); border-radius: 20px; height: 6px; margin: 8px 0 14px; overflow: hidden; }
+    .level-bar-fill { height: 100%; border-radius: 20px; transition: width .5s ease; }
+    .rank-card.alex .level-bar-fill { background: var(--alex); }
+    .rank-card.ket  .level-bar-fill { background: var(--ket); }
+    .rank-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .rank-stat { background: var(--surface2); border-radius: 8px; padding: 8px 6px; }
+    .rank-stat-val   { font-size: 1.2rem; font-weight: 900; }
+    .rank-stat-label { font-size: .62rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .03em; }
+    .comparison-block { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); padding: 18px; margin-bottom: 14px; }
+    .comparison-block h3 { font-size: .8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px; }
+    .bar-labels { display: flex; justify-content: space-between; font-size: .78rem; font-weight: 700; margin-bottom: 6px; }
+    .bar-track { background: var(--surface2); border-radius: 20px; height: 22px; display: flex; overflow: hidden; }
+    .bar-alex { height: 100%; background: linear-gradient(90deg, var(--alex), #0288d1); transition: width .6s ease; display: flex; align-items: center; padding-left: 8px; }
+    .bar-ket  { height: 100%; background: linear-gradient(90deg, var(--ket), #c2185b);  transition: width .6s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+    .bar-lbl  { font-size: .68rem; font-weight: 900; color: rgba(255,255,255,.9); }
+    .leader-banner { background: rgba(255,215,0,.07); border: 1px solid rgba(255,215,0,.22); border-radius: var(--r-sm); padding: 10px 16px; text-align: center; margin-bottom: 14px; }
+    .leader-banner .lbl { font-size: .7rem; color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+    .leader-banner .val { font-size: 1rem; font-weight: 900; margin-top: 2px; }
+
+    /* ===== VALES ===== */
+    .vales-section { margin-top: 4px; }
+    .vales-section h3 { font-size: .8rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+    .vales-list { display: flex; flex-direction: column; gap: 10px; }
+    .vale-card {
+      background: var(--surface);
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: border-color .2s;
+    }
+    .vale-card.monthly { border-color: rgba(255,215,0,.18); }
+    .vale-card.fulfilled { opacity: .5; }
+    .vale-card.broken    { opacity: .5; border-color: rgba(239,83,80,.2); }
+    .vale-icon { font-size: 2.2rem; flex-shrink: 0; line-height: 1; padding-top: 2px; }
+    .vale-info { flex: 1; min-width: 0; }
+    .vale-title { font-size: .95rem; font-weight: 900; margin-bottom: 3px; }
+    .vale-meta  { font-size: .7rem; color: var(--text-dim); font-weight: 700; margin-bottom: 5px; }
+    .vale-desc  { font-size: .78rem; color: var(--text-dim); line-height: 1.45; }
+    .vale-penalty { font-size: .72rem; color: var(--red); font-weight: 700; margin-top: 4px; }
+    .vale-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .btn-fulfill {
+      padding: 7px 11px; border: 1px solid rgba(105,240,174,.3); border-radius: 8px;
+      background: rgba(105,240,174,.12); color: var(--green);
+      font-family: inherit; font-size: .75rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all .2s;
+    }
+    .btn-fulfill:hover { background: rgba(105,240,174,.22); }
+    .btn-break {
+      padding: 7px 11px; border: 1px solid rgba(239,83,80,.3); border-radius: 8px;
+      background: rgba(239,83,80,.1); color: var(--red);
+      font-family: inherit; font-size: .75rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all .2s;
+    }
+    .btn-break:hover { background: rgba(239,83,80,.2); }
+    .vale-status-badge {
+      display: inline-block; font-size: .65rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .05em; padding: 2px 8px; border-radius: 20px; margin-top: 4px;
+    }
+    .vale-status-badge.fulfilled { background: rgba(105,240,174,.12); color: var(--green); }
+    .vale-status-badge.broken    { background: rgba(239,83,80,.12);   color: var(--red); }
+
+    /* ===== ROULETTE MODAL ===== */
+    .wheel-modal-body { padding: 16px 20px 20px; }
+    .wheel-winner-banner { text-align: center; margin-bottom: 18px; }
+    .wheel-winner-banner .ww-label { font-size: .72rem; color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .wheel-winner-banner .ww-name  { font-size: 1.2rem; font-weight: 900; margin-top: 4px; }
+    .wheel-wrap {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto;
+    }
+    .wheel-pointer {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.6rem;
+      color: var(--gold);
+      text-shadow: 0 0 14px rgba(255,215,0,.8);
+      z-index: 2;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .wheel-svg-wrap {
+      width: 100%;
+      height: 100%;
+      transform-origin: center center;
+      will-change: transform;
+    }
+    .spin-result-area { min-height: 56px; margin: 16px 0 4px; }
+    .spin-result-banner {
+      background: rgba(255,215,0,.1);
+      border: 1px solid rgba(255,215,0,.3);
+      border-radius: var(--r-sm);
+      padding: 16px;
+      text-align: center;
+      animation: slideUp .3s ease;
+    }
+    .spin-result-banner .sr-emoji { font-size: 2.6rem; margin-bottom: 8px; line-height: 1; }
+    .spin-result-banner .sr-title { font-size: 1.05rem; font-weight: 900; color: var(--gold); }
+    .spin-result-banner .sr-desc  { font-size: .8rem; color: var(--text-dim); margin-top: 4px; }
+    .roulette-spin-btn {
+      width: 100%; padding: 14px; border: none; border-radius: var(--r-sm);
+      background: linear-gradient(135deg, var(--gold), #ff8f00);
+      color: #07071a; font-family: inherit; font-size: 1rem; font-weight: 900;
+      cursor: pointer; transition: all .2s; margin-top: 4px;
+      box-shadow: 0 4px 20px rgba(255,215,0,.25);
+    }
+    .roulette-spin-btn:hover { opacity: .9; transform: translateY(-1px); }
+    .roulette-spin-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* ===== MODALS ===== */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.72); backdrop-filter: blur(6px); z-index: 200; display: flex; align-items: flex-end; padding: 16px; }
+    .modal-overlay[hidden] { display: none; }
+    .modal-overlay.layer2 { z-index: 250; }
+    .modal-overlay.layer3 { z-index: 300; }
+    .modal { background: #0f0f2b; border: 1px solid rgba(255,255,255,.15); border-radius: var(--r) var(--r) var(--r-sm) var(--r-sm); width: 100%; max-width: 560px; margin: 0 auto; max-height: 88vh; overflow-y: auto; animation: slideUp .22s ease; }
+    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #0f0f2b; z-index: 2; }
+    .modal-title { font-size: 1.05rem; font-weight: 900; }
+    .modal-close { background: var(--surface2); border: none; border-radius: 8px; color: var(--text-dim); font-size: 1rem; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; flex-shrink: 0; }
+    .modal-close:hover { color: white; background: var(--red); }
+    .modal-body { padding: 18px 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: .75rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+    .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text); font-family: inherit; font-size: .92rem; font-weight: 600; padding: 10px 14px; transition: border-color .2s; }
+    .form-input:focus { outline: none; border-color: rgba(255,255,255,.35); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .toggle-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .toggle-btn { padding: 7px 14px; border: 1px solid var(--border); border-radius: 50px; background: transparent; color: var(--text-dim); font-family: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+    .toggle-btn:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
+    .toggle-btn.active { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.35); color: white; }
+    .toggle-btn.alex-btn.active { background: rgba(79,195,247,.2); border-color: var(--alex); color: var(--alex); }
+    .toggle-btn.ket-btn.active  { background: rgba(244,143,177,.2); border-color: var(--ket); color: var(--ket); }
+    .day-toggles { display: flex; gap: 5px; flex-wrap: wrap; }
+    .day-toggle { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--text-dim); font-family: inherit; font-size: .68rem; font-weight: 800; cursor: pointer; transition: all .2s; }
+    .day-toggle.active { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.4); color: white; }
+    .form-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .btn-primary { flex: 1; padding: 12px; border: none; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--alex), var(--ket)); color: white; font-family: inherit; font-size: .92rem; font-weight: 800; cursor: pointer; transition: all .2s; }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-danger { padding: 12px 16px; border: 1px solid rgba(239,83,80,.4); border-radius: var(--r-sm); background: rgba(239,83,80,.1); color: var(--red); font-family: inherit; font-size: .92rem; font-weight: 800; cursor: pointer; transition: all .2s; }
+    .btn-danger:hover { background: rgba(239,83,80,.2); }
+    .manage-list { display: flex; flex-direction: column; gap: 8px; }
+    .manage-task-item { display: flex; align-items: center; gap: 10px; background: var(--surface2); border-radius: var(--r-sm); border: 1px solid var(--border); padding: 11px 12px; transition: border-color .2s, background .2s; }
+    .manage-task-item.dragging { opacity: .45; }
+    .drag-handle { color: var(--text-dim); cursor: grab; font-size: 1.1rem; padding: 2px 4px; flex-shrink: 0; line-height: 1; }
+    .drag-handle:active { cursor: grabbing; }
+    .manage-task-info { flex: 1; min-width: 0; }
+    .manage-task-title { font-weight: 700; font-size: .88rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .manage-task-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+    .badge { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 20px; }
+    .badge-alex   { background: rgba(79,195,247,.18);  color: var(--alex); }
+    .badge-ket    { background: rgba(244,143,177,.18); color: var(--ket); }
+    .badge-ambos  { background: rgba(255,255,255,.08); color: var(--text-dim); }
+    .badge-rec    { background: rgba(105,240,174,.12); color: var(--green); }
+    .badge-avulso { background: rgba(255,215,0,.12);   color: var(--gold); }
+    .manage-task-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .icon-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; color: var(--text-dim); font-size: .88rem; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .icon-btn:hover { color: white; background: var(--surface2); }
+    .icon-btn.delete:hover { color: var(--red); border-color: rgba(239,83,80,.4); }
+    .add-task-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px; border: 1px dashed rgba(255,255,255,.18); border-radius: var(--r-sm); background: transparent; color: var(--text-dim); font-family: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; transition: all .2s; margin-bottom: 12px; }
+    .add-task-btn:hover { border-color: rgba(255,255,255,.35); color: var(--text); background: var(--surface); }
+
+    /* ===== PRIZE CONFIG ===== */
+    .prize-config-link {
+      background: transparent; border: none; color: var(--text-dim);
+      font-family: inherit; font-size: .78rem; font-weight: 700;
+      cursor: pointer; text-decoration: underline; text-decoration-color: rgba(255,255,255,.2);
+      padding: 4px 0; transition: color .2s;
+    }
+    .prize-config-link:hover { color: var(--text); }
+    .prize-type-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .prize-type-tab { flex: 1; padding: 9px; border: 1px solid var(--border); border-radius: var(--r-sm); background: transparent; color: var(--text-dim); font-family: inherit; font-size: .85rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+    .prize-type-tab.active { background: var(--surface2); border-color: rgba(255,255,255,.25); color: white; }
+    .prize-item { display: flex; align-items: center; gap: 10px; background: var(--surface2); border-radius: var(--r-sm); border: 1px solid var(--border); padding: 10px 12px; margin-bottom: 7px; }
+    .prize-item.disabled { opacity: .38; }
+    .prize-onoff { width: 28px; height: 28px; border-radius: 50%; border: 2px solid; font-size: .75rem; font-weight: 900; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .prize-onoff.on  { background: rgba(105,240,174,.15); border-color: var(--green); color: var(--green); }
+    .prize-onoff.off { background: transparent; border-color: var(--border); color: var(--text-dim); }
+    .prize-info { flex: 1; min-width: 0; }
+    .prize-emoji-name { font-size: .88rem; font-weight: 700; }
+    .prize-desc-small { font-size: .68rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .prize-edit-form { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.12); border-radius: var(--r-sm); padding: 14px; margin-bottom: 8px; }
+    .prize-edit-row { display: grid; grid-template-columns: 70px 1fr; gap: 8px; margin-bottom: 10px; }
+    .btn-sm { padding: 8px 16px; border: none; border-radius: var(--r-sm); background: rgba(79,195,247,.2); color: var(--alex); font-family: inherit; font-size: .82rem; font-weight: 800; cursor: pointer; transition: all .2s; }
+    .btn-sm:hover { background: rgba(79,195,247,.3); }
+    .btn-sm-ghost { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: transparent; color: var(--text-dim); font-family: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+    .btn-sm-ghost:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
+    .prizes-footer { display: flex; gap: 8px; margin-top: 14px; }
+    .prizes-footer .add-task-btn { margin: 0; flex: 1; }
+
+    /* ===== MISC ===== */
+    .point-popup { position: fixed; pointer-events: none; z-index: 999; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.05rem; animation: ptFloat .85s ease forwards; }
+    @keyframes ptFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 60% { transform: translateY(-50px) scale(1.25); opacity: 1; } 100% { transform: translateY(-70px) scale(1.1); opacity: 0; } }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.2); }
+    .section-divider { height: 1px; background: var(--border); margin: 18px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>🚀 Rotina Foguete</h1>
+      <div class="header-date" id="headerDate"></div>
+    </div>
+    <button class="manage-btn" id="btnManage">⚙️ Tarefas</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="dia">📅 Dia</button>
+  <button class="tab-btn" data-tab="semana">📊 Semana</button>
+  <button class="tab-btn" data-tab="mes">📆 Mês</button>
+  <button class="tab-btn" data-tab="ranking">🏆 Ranking</button>
+</nav>
+
+<main class="content" id="mainContent"></main>
+
+<!-- Manage Tasks Modal -->
+<div class="modal-overlay" id="modalManage" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">⚙️ Gerenciar Tarefas</span>
+      <button class="modal-close" id="btnCloseManage">✕</button>
+    </div>
+    <div class="modal-body" id="manageBody"></div>
+  </div>
+</div>
+
+<!-- Task Edit Modal -->
+<div class="modal-overlay layer2" id="modalTask" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="taskModalTitle">➕ Nova Tarefa</span>
+      <button class="modal-close" id="btnCloseTask">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Título (pode incluir emoji)</label>
+        <input class="form-input" id="inputTitle" type="text" maxlength="60" placeholder="Ex: ☕ Fazer café"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Pontos</label>
+          <input class="form-input" id="inputPoints" type="number" min="1" max="999" value="10"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <div class="toggle-group" id="typeGroup">
+            <button class="toggle-btn active" data-val="recorrente">🔄 Recorrente</button>
+            <button class="toggle-btn" data-val="avulso">📌 Avulso</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Para quem</label>
+        <div class="toggle-group" id="assigneeGroup">
+          <button class="toggle-btn alex-btn active" data-val="alex">💙 Alex</button>
+          <button class="toggle-btn ket-btn" data-val="ketellyn">💗 Kétellyn</button>
+          <button class="toggle-btn" data-val="ambos">🤝 Ambos</button>
+        </div>
+      </div>
+      <div class="form-group" id="daysGroup">
+        <label class="form-label">Dias da semana <span style="font-weight:400;text-transform:none;font-size:.9em;">(nenhum = todos)</span></label>
+        <div class="day-toggles" id="dayToggles"></div>
+      </div>
+      <div class="form-group" id="dateGroup" style="display:none">
+        <label class="form-label">Data</label>
+        <input class="form-input" id="inputDate" type="date"/>
+      </div>
+      <div class="form-actions" id="taskFormActions">
+        <button class="btn-primary" id="btnSaveTask">Salvar Tarefa</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Prizes Config Modal -->
+<div class="modal-overlay layer2" id="modalPrizes" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🎡 Configurar Prêmios</span>
+      <button class="modal-close" id="btnClosePrizes">✕</button>
+    </div>
+    <div class="modal-body" id="prizesBody"></div>
+  </div>
+</div>
+
+<!-- Roulette Modal -->
+<div class="modal-overlay layer3" id="modalRoulette" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="rouletteTitle">🎡 Roleta</span>
+      <button class="modal-close" id="btnCloseRoulette">✕</button>
+    </div>
+    <div class="wheel-modal-body" id="rouletteBody"></div>
+  </div>
+</div>
+
+<script>
+// ======================== CONSTANTS ========================
+const STORAGE_KEY = 'rotina_foguete_v4';
+const DAY_SHORT  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DAY_FULL   = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+const MONTHS     = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const LEVELS     = [
+  { min: 0,    emoji: '🌱', name: 'Calouro',     next: 100  },
+  { min: 100,  emoji: '⭐', name: 'Aventureiro', next: 300  },
+  { min: 300,  emoji: '⚔️', name: 'Guerreiro',   next: 600  },
+  { min: 600,  emoji: '🦸', name: 'Herói',       next: 1000 },
+  { min: 1000, emoji: '👑', name: 'Lenda',       next: 2000 },
+  { min: 2000, emoji: '🚀', name: 'Foguete',     next: null },
+];
+
+const WEEKLY_PRIZES = [
+  { id:'louça',    emoji:'🍽️', label:'Vale Louça',    shortLabel:'Louça',   color:'#1e88e5',
+    desc:'Pede pro outro lavar a louça do dia que escolher' },
+  { id:'cafe',     emoji:'☕',  label:'Vale Café',     shortLabel:'Café',    color:'#e64a19',
+    desc:'O outro prepara um café da manhã completo' },
+  { id:'mimo',     emoji:'🎁',  label:'Vale Mimo',     shortLabel:'Mimo',    color:'#8e24aa',
+    desc:'Ganha um mimo surpresa pequeno do parceiro' },
+  { id:'almoco',   emoji:'🍱',  label:'Vale Almoço',   shortLabel:'Almoço',  color:'#2e7d32',
+    desc:'O outro faz ou busca o almoço do dia escolhido' },
+  { id:'jantar',   emoji:'🌙',  label:'Vale Jantar',   shortLabel:'Jantar',  color:'#c62828',
+    desc:'O outro faz ou pede o jantar da noite escolhida' },
+  { id:'massagem', emoji:'💆',  label:'Vale Massagem', shortLabel:'Massagem',color:'#6a1b9a',
+    desc:'Massagem relaxante de pelo menos 10 minutos do parceiro' },
+];
+
+const MONTHLY_PRIZES = [
+  { id:'j_rom',     emoji:'🍷', label:'Jantar Romântico',    shortLabel:'Jantar R.', color:'#b71c1c',
+    desc:'O outro organiza um jantar especial para vocês dois' },
+  { id:'folga',     emoji:'🛌', label:'Dia de Folga Total',  shortLabel:'Folga',     color:'#00695c',
+    desc:'Um dia inteiro sem nenhuma tarefa de rotina' },
+  { id:'passeio',   emoji:'🏖️', label:'Vale Passeio',        shortLabel:'Passeio',   color:'#e65100',
+    desc:'Escolhe um programa ou passeio especial para o casal' },
+  { id:'cafe_cama', emoji:'🌅', label:'Café na Cama',        shortLabel:'Café Cama', color:'#388e3c',
+    desc:'Café da manhã completo servido na cama com carinho' },
+  { id:'pedido',    emoji:'🎰', label:'Pedido Especial',     shortLabel:'Pedido',    color:'#880e4f',
+    desc:'Um pedido especial razoável que o outro não pode recusar 😏' },
+  { id:'rei_rainha',emoji:'🌹', label:'Dia do Rei/Rainha',   shortLabel:'Rei/Rainha',color:'#ad1457',
+    desc:'Dia inteiro sendo paparicado — o parceiro atende todos os pedidos' },
+  { id:'programa',  emoji:'🎭', label:'Vale Programa',       shortLabel:'Programa',  color:'#4527a0',
+    desc:'Cinema, show, teatro ou evento cultural que o vencedor escolher' },
+  { id:'compras',   emoji:'🛍️', label:'Vale Comprinhas',     shortLabel:'Comprinhas',color:'#00838f',
+    desc:'Um valorinho combinado para gastar livremente no que quiser' },
+  { id:'surpresa',  emoji:'💝', label:'Vale Surpresa',       shortLabel:'Surpresa',  color:'#c62828',
+    desc:'O outro prepara uma surpresa especial e caprichada — sem dicas!' },
+  { id:'escapada',  emoji:'🏨', label:'Vale Escapadinha',    shortLabel:'Escapadinha',color:'#1565c0',
+    desc:'Planejar juntos uma saída especial ou mini-viagem a dois' },
+];
+
+// ======================== STATE ========================
+function uid() { return Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
+
+function defaultState() {
+  return {
+    tasks: [
+      { id: uid(), title: '☕ Fazer café',       points: 10, assignee: 'alex',     type: 'recorrente', days: [],      order: 0 },
+      { id: uid(), title: '🗑️ Tirar o lixo',    points: 10, assignee: 'alex',     type: 'recorrente', days: [1,3,5], order: 1 },
+      { id: uid(), title: '🛏️ Arrumar a cama',  points: 10, assignee: 'ketellyn', type: 'recorrente', days: [],      order: 0 },
+      { id: uid(), title: '🧺 Lavar roupa',      points: 20, assignee: 'ketellyn', type: 'recorrente', days: [2,4,6], order: 1 },
+      { id: uid(), title: '🍽️ Lavar louça',     points: 15, assignee: 'ambos',    type: 'recorrente', days: [],      order: 2 },
+      { id: uid(), title: '🧹 Limpar a casa',    points: 25, assignee: 'ambos',    type: 'recorrente', days: [6],     order: 3 },
+    ],
+    completions: [],
+    adjustments: [],
+    spins: [],
+    vales: [],
+    prizes: {
+      weekly:  WEEKLY_PRIZES.map(p=>({...p,enabled:true})),
+      monthly: MONTHLY_PRIZES.map(p=>({...p,enabled:true}))
+    }
+  };
+}
+
+let state;
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state = JSON.parse(raw);
+      if (!state.adjustments) state.adjustments = [];
+      if (!state.spins)       state.spins = [];
+      if (!state.vales)       state.vales = [];
+      if (!state.prizes)      state.prizes = {};
+      if (!state.prizes.weekly)  state.prizes.weekly  = WEEKLY_PRIZES.map(p=>({...p,enabled:true}));
+      if (!state.prizes.monthly) state.prizes.monthly = MONTHLY_PRIZES.map(p=>({...p,enabled:true}));
+      return;
+    }
+  } catch(e) {}
+  state = defaultState();
+}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function getActivePrizes(type) { return (state.prizes[type]||[]).filter(p=>p.enabled!==false); }
+
+// ======================== DATE UTILS ========================
+function toStr(d)  { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function pad(n)    { return String(n).padStart(2,'0'); }
+function fromStr(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function todayStr(){ return toStr(new Date()); }
+
+function getWeekDays(refStr) {
+  const ref = fromStr(refStr);
+  const dow = ref.getDay();
+  const diff = dow === 0 ? -6 : 1 - dow;
+  const mon = new Date(ref);
+  mon.setDate(ref.getDate() + diff);
+  return Array.from({length:7}, (_,i) => { const d=new Date(mon); d.setDate(mon.getDate()+i); return toStr(d); });
+}
+
+function getMonthDays(year, month) {
+  const days=[], d=new Date(year,month-1,1);
+  while(d.getMonth()===month-1){ days.push(toStr(new Date(d))); d.setDate(d.getDate()+1); }
+  return days;
+}
+
+function getWeekKey(dateStr) { return `week_${getWeekDays(dateStr)[0]}`; }
+function getMonthKey(year,month) { return `month_${year}-${pad(month)}`; }
+
+// ======================== BUSINESS LOGIC ========================
+function getLevel(pts) { let lv=LEVELS[0]; for(const l of LEVELS){if(pts>=l.min)lv=l;} return lv; }
+function getLevelProgress(pts) {
+  const lv=getLevel(pts); if(!lv.next) return 100;
+  return Math.min(100,Math.round(((pts-lv.min)/(lv.next-lv.min))*100));
+}
+
+function getTasksForDay(dateStr, assignee) {
+  const dow = fromStr(dateStr).getDay();
+  return state.tasks
+    .filter(t=>{
+      if(t.assignee!==assignee && t.assignee!=='ambos') return false;
+      if(t.type==='recorrente') return t.days.length===0 || t.days.includes(dow);
+      return t.date===dateStr;
+    })
+    .sort((a,b)=>(a.order||0)-(b.order||0));
+}
+
+function isCompleted(taskId, assignee, dateStr) {
+  return state.completions.some(c=>c.taskId===taskId&&c.assignee===assignee&&c.date===dateStr);
+}
+
+function toggleCompletion(taskId, assignee, dateStr) {
+  const idx=state.completions.findIndex(c=>c.taskId===taskId&&c.assignee===assignee&&c.date===dateStr);
+  if(idx>=0){ state.completions.splice(idx,1); saveState(); return false; }
+  const task=state.tasks.find(t=>t.id===taskId);
+  if(!task) return false;
+  state.completions.push({taskId,assignee,date:dateStr,points:task.points,at:Date.now()});
+  saveState(); return true;
+}
+
+function ptsForDate(assignee, dateStr) {
+  const earned = state.completions.filter(c=>c.assignee===assignee&&c.date===dateStr).reduce((s,c)=>s+(c.points||0),0);
+  const adj    = state.adjustments.filter(a=>a.assignee===assignee&&a.date===dateStr).reduce((s,a)=>s+(a.points||0),0);
+  return Math.max(0, earned + adj);
+}
+
+function ptsEarnedForDate(assignee, dateStr) {
+  return state.completions.filter(c=>c.assignee===assignee&&c.date===dateStr).reduce((s,c)=>s+(c.points||0),0);
+}
+
+function ptsTotal(assignee) {
+  const earned = state.completions.filter(c=>c.assignee===assignee).reduce((s,c)=>s+(c.points||0),0);
+  const adj    = state.adjustments.filter(a=>a.assignee===assignee).reduce((s,a)=>s+(a.points||0),0);
+  return Math.max(0, earned+adj);
+}
+
+function tasksDone(assignee)  { return state.completions.filter(c=>c.assignee===assignee).length; }
+function daysWon(assignee,dates) {
+  return dates.filter(d=>{
+    const a=ptsForDate('alex',d), k=ptsForDate('ketellyn',d);
+    if(a===0&&k===0) return false;
+    return assignee==='alex'?a>k:k>a;
+  }).length;
+}
+function winnerBadge(ds,compact=false) {
+  const today=todayStr(), future=ds>today;
+  const a=ptsForDate('alex',ds), k=ptsForDate('ketellyn',ds);
+  if(future) return '';
+  if(a===0&&k===0) return ds===today?'⏳':'-';
+  if(a>k) return compact?'💙':'💙 Alex';
+  if(k>a) return compact?'💗':'💗 Ket';
+  return '🤝';
+}
+
+// ======================== PRIZE/SPIN LOGIC ========================
+function getPeriodWinner(alexPts, ketPts) {
+  if(alexPts===ketPts||alexPts===0&&ketPts===0) return null;
+  return alexPts>ketPts?'alex':'ketellyn';
+}
+function hasSpun(key) { return state.spins.some(s=>s.key===key); }
+function getSpinForKey(key) { return state.spins.find(s=>s.key===key)||null; }
+
+function fulfillVale(valeId) {
+  const vale = state.vales.find(v=>v.id===valeId);
+  if(!vale||vale.status!=='active') return;
+  vale.status = 'fulfilled';
+  vale.resolvedAt = Date.now();
+  saveState(); renderTab();
+}
+
+function breakVale(valeId) {
+  const vale = state.vales.find(v=>v.id===valeId);
+  if(!vale||vale.status!=='active') return;
+
+  const today = todayStr();
+  const punished = vale.winner==='alex' ? 'ketellyn' : 'alex';
+  const rewarded  = vale.winner;
+
+  const earned  = ptsEarnedForDate(punished, today);
+  const deduct  = Math.round(earned * 0.50);
+  const bonus   = Math.round(deduct * 0.50);
+
+  if(deduct>0) {
+    state.adjustments.push({ id:uid(), date:today, assignee:punished, points:-deduct, reason:`Penalidade: não cumpriu ${vale.prize.label}`, valeId });
+  }
+  if(bonus>0) {
+    state.adjustments.push({ id:uid(), date:today, assignee:rewarded,  points:+bonus,  reason:`Bônus: ${vale.prize.label} não cumprido`,    valeId });
+  }
+
+  vale.status = 'broken';
+  vale.resolvedAt = Date.now();
+  vale.penaltyDeducted = deduct;
+  vale.penaltyBonus    = bonus;
+
+  saveState(); renderTab();
+}
+
+// ======================== ROULETTE MODAL ========================
+let roulKey=null, roulType=null, roulWinner=null, roulPrizes=null;
+let wheelRot=0, wheelDone=false;
+
+function openRouletteModal(type, key, winner, prizes) {
+  roulKey=key; roulType=type; roulWinner=winner; roulPrizes=prizes;
+  wheelRot=0; wheelDone=false;
+
+  const wName = winner==='alex'?'Alex':'Kétellyn';
+  const wEmoji= winner==='alex'?'💙':'💗';
+  const typeLabel = type==='weekly'?'da Semana':'do Mês';
+
+  document.getElementById('rouletteTitle').textContent = `🎡 Roleta ${type==='weekly'?'Semanal':'Mensal'}`;
+  document.getElementById('rouletteBody').innerHTML = `
+    <div class="wheel-winner-banner">
+      <div class="ww-label">Vencedor${type==='monthly'?' do Mês':' da Semana'}</div>
+      <div class="ww-name">${wEmoji} ${wName} gira a roleta!</div>
+    </div>
+    <div class="wheel-wrap">
+      <div class="wheel-pointer">▼</div>
+      <div class="wheel-svg-wrap" id="wheelSvgWrap">${buildWheelSVG(prizes)}</div>
+    </div>
+    <div class="spin-result-area" id="spinResultArea"></div>
+    <button class="roulette-spin-btn" id="btnDoSpin">🎰 GIRAR!</button>`;
+
+  document.getElementById('btnDoSpin').addEventListener('click', doSpin);
+  document.getElementById('modalRoulette').hidden = false;
+}
+
+function buildWheelSVG(prizes) {
+  const n=prizes.length, cx=140,cy=140,r=128;
+  const arc=(2*Math.PI)/n;
+  let segs='';
+  prizes.forEach((p,i)=>{
+    const a0=i*arc-Math.PI/2, a1=(i+1)*arc-Math.PI/2;
+    const x0=(cx+r*Math.cos(a0)).toFixed(2), y0=(cy+r*Math.sin(a0)).toFixed(2);
+    const x1=(cx+r*Math.cos(a1)).toFixed(2), y1=(cy+r*Math.sin(a1)).toFixed(2);
+    const large=arc>Math.PI?1:0;
+    const path=`M${cx},${cy} L${x0},${y0} A${r},${r} 0 ${large},1 ${x1},${y1} Z`;
+
+    const amid=i*arc+arc/2-Math.PI/2;
+    const dist=r*0.63;
+    const tx=(cx+dist*Math.cos(amid)).toFixed(2);
+    const ty=(cy+dist*Math.sin(amid)).toFixed(2);
+    const textDeg=((i*arc+arc/2)*180/Math.PI);
+
+    segs += `<path d="${path}" fill="${p.color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>`;
+    segs += `<g transform="rotate(${textDeg.toFixed(1)},${tx},${ty})">
+      <text x="${tx}" y="${(parseFloat(ty)-7).toFixed(2)}" text-anchor="middle" font-size="18" font-family="serif">${p.emoji}</text>
+      <text x="${tx}" y="${(parseFloat(ty)+9).toFixed(2)}" text-anchor="middle" font-size="9" font-weight="800" font-family="Nunito,sans-serif" fill="rgba(255,255,255,0.92)">${p.shortLabel}</text>
+    </g>`;
+  });
+  return `<svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+    <circle cx="${cx}" cy="${cy}" r="${r+6}" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="3"/>
+    ${segs}
+    <circle cx="${cx}" cy="${cy}" r="24" fill="#07071a"/>
+    <circle cx="${cx}" cy="${cy}" r="21" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+    <text x="${cx}" y="${cy+7}" text-anchor="middle" font-size="18" font-family="serif">🚀</text>
+  </svg>`;
+}
+
+function doSpin() {
+  if(wheelDone) return;
+  const prizes=roulPrizes, n=prizes.length, arc=360/n;
+  const resultIdx=Math.floor(Math.random()*n);
+  const prizeCenter=resultIdx*arc+arc/2;
+  const jitter=(Math.random()-0.5)*arc*0.5;
+  const target=prizeCenter+jitter;
+  const currentMod=wheelRot%360;
+  let diff=target-currentMod;
+  if(diff<=0) diff+=360;
+  const fullSpins=(7+Math.floor(Math.random()*4))*360;
+  wheelRot+=fullSpins+diff;
+
+  const wrap=document.getElementById('wheelSvgWrap');
+  wrap.style.transition=`transform 4.8s cubic-bezier(0.1,0.85,0.28,1.0)`;
+  wrap.style.transform=`rotate(${wheelRot}deg)`;
+
+  const btn=document.getElementById('btnDoSpin');
+  btn.disabled=true; btn.textContent='⏳ Girando...';
+
+  setTimeout(()=>{ showSpinResult(prizes[resultIdx]); }, 5000);
+}
+
+function showSpinResult(prize) {
+  wheelDone=true;
+  const wName=roulWinner==='alex'?'Alex':'Kétellyn';
+  document.getElementById('spinResultArea').innerHTML=`
+    <div class="spin-result-banner">
+      <div class="sr-emoji">${prize.emoji}</div>
+      <div class="sr-title">${prize.label}!</div>
+      <div class="sr-desc">${prize.desc}</div>
+    </div>`;
+
+  const btn=document.getElementById('btnDoSpin');
+  btn.disabled=false;
+  btn.textContent='✓ Guardar Vale e Fechar';
+  btn.style.background='linear-gradient(135deg,#43a047,#1b5e20)';
+  btn.onclick=()=>{ recordSpin(prize); document.getElementById('modalRoulette').hidden=true; renderTab(); };
+}
+
+function recordSpin(prize) {
+  const spinId=uid();
+  state.spins.push({ id:spinId, key:roulKey, type:roulType, winner:roulWinner, prize, date:todayStr() });
+  state.vales.push({ id:uid(), spinId, key:roulKey, type:roulType, winner:roulWinner, prize, status:'active', createdAt:Date.now() });
+  saveState();
+}
+
+// ======================== RENDERING ========================
+let currentTab='dia';
+let monthRef={ year:new Date().getFullYear(), month:new Date().getMonth()+1 };
+
+function renderApp() {
+  const now=new Date();
+  document.getElementById('headerDate').textContent=`${DAY_FULL[now.getDay()]}, ${now.getDate()} de ${MONTHS[now.getMonth()]}`;
+  renderTab();
+}
+
+function renderTab() {
+  const el=document.getElementById('mainContent');
+  if     (currentTab==='dia')     el.innerHTML=buildDayTab();
+  else if(currentTab==='semana')  el.innerHTML=buildWeekTab();
+  else if(currentTab==='mes')     el.innerHTML=buildMonthTab();
+  else if(currentTab==='ranking') el.innerHTML=buildRankingTab();
+  bindTabEvents();
+}
+
+// ---- DAY ----
+function buildDayTab() {
+  const today=todayStr();
+  return `<div class="day-grid">
+    ${buildPersonCol('alex','Alex','🚀',today)}
+    ${buildPersonCol('ketellyn','Kétellyn','💫',today)}
+  </div>`;
+}
+
+function buildPersonCol(assignee,name,emoji,dateStr) {
+  const cls=assignee==='alex'?'alex':'ket';
+  const tasks=getTasksForDay(dateStr,assignee);
+  const pts=ptsForDate(assignee,dateStr);
+  const done=tasks.filter(t=>isCompleted(t.id,assignee,dateStr)).length;
+
+  const taskHtml=tasks.length===0
+    ?`<div class="empty-state">Sem tarefas hoje!<br>🎉 Dia livre!</div>`
+    :tasks.map(t=>{
+      const checked=isCompleted(t.id,assignee,dateStr);
+      return `<div class="task-item ${checked?'completed':''}" data-task="${t.id}" data-who="${assignee}" data-date="${dateStr}">
+        <div class="task-check ${checked?'checked':''}">${checked?'✓':''}</div>
+        <div class="task-info">
+          <div class="task-title">${esc(t.title)}</div>
+          <div class="task-pts">⚡ ${t.points} pts</div>
+        </div>
+      </div>`;
+    }).join('');
+
+  return `<div class="person-col ${cls}">
+    <div class="person-header ${cls}">
+      <div class="person-avatar">${emoji}</div>
+      <div>
+        <div class="person-name">${name}</div>
+        <div class="person-sub">${done}/${tasks.length} tarefas concluídas</div>
+      </div>
+    </div>
+    <div class="task-list">${taskHtml}</div>
+    <div class="person-footer">
+      <div class="score-display">${pts}</div>
+      <div class="score-label">⚡ pontos hoje</div>
+    </div>
+  </div>`;
+}
+
+// ---- WEEK ----
+function buildWeekTab() {
+  const today=todayStr(), days=getWeekDays(today);
+  const d0=fromStr(days[0]), d6=fromStr(days[6]);
+  const rows=days.map(ds=>{
+    const d=fromStr(ds), isToday=ds===today, future=ds>today;
+    const a=ptsForDate('alex',ds), k=ptsForDate('ketellyn',ds);
+    return `<div class="period-row ${isToday?'today':''} ${future?'future':''}">
+      <div class="day-info"><div class="day-name">${DAY_FULL[d.getDay()]}</div><div class="day-date">${d.getDate()}/${d.getMonth()+1}</div></div>
+      <div class="period-pts alex">${future?'-':a||'-'}</div>
+      <div class="period-pts ket">${future?'-':k||'-'}</div>
+      <div class="winner-badge">${winnerBadge(ds)}</div>
+    </div>`;
+  }).join('');
+
+  const past=days.filter(d=>d<=today);
+  const wa=past.reduce((s,d)=>s+ptsForDate('alex',d),0);
+  const wk=past.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
+  const weekKey=getWeekKey(today);
+
+  return `
+    <div class="period-section-title">
+      <h2>Semana atual</h2>
+      <span>${d0.getDate()}/${d0.getMonth()+1} – ${d6.getDate()}/${d6.getMonth()+1}</span>
+    </div>
+    <div class="period-summary">
+      <div class="period-header">
+        <div>Dia</div><div class="col-alex">💙 Alex</div><div class="col-ket">💗 Ket</div><div class="col-win">Vencedor</div>
+      </div>
+      ${rows}
+      <div class="period-row total-row">
+        <div class="day-info"><div class="day-name" style="color:var(--gold)">⭐ Total</div></div>
+        <div class="period-pts alex">${wa}</div>
+        <div class="period-pts ket">${wk}</div>
+        <div class="winner-badge">${wa>wk?'💙 Alex':wk>wa?'💗 Ket':wa===0&&wk===0?'-':'🤝'}</div>
+      </div>
+    </div>
+    ${buildWinnerSection('weekly', weekKey, wa, wk)}`;
+}
+
+// ---- MONTH ----
+function buildMonthTab() {
+  const today=todayStr(), {year,month}=monthRef;
+  const days=getMonthDays(year,month);
+  const past=days.filter(d=>d<=today);
+  const ma=past.reduce((s,d)=>s+ptsForDate('alex',d),0);
+  const mk=past.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
+  const wa=daysWon('alex',past), wk=daysWon('ketellyn',past);
+  const monthKey=getMonthKey(year,month);
+
+  const rows=days.map(ds=>{
+    const d=fromStr(ds), isToday=ds===today, future=ds>today;
+    const a=ptsForDate('alex',ds), k=ptsForDate('ketellyn',ds);
+    return `<div class="period-row ${isToday?'today':''} ${future?'future':''}">
+      <div class="day-info"><div class="day-name">${DAY_SHORT[d.getDay()]} ${d.getDate()}</div></div>
+      <div class="period-pts alex">${future?'-':a||'-'}</div>
+      <div class="period-pts ket">${future?'-':k||'-'}</div>
+      <div class="winner-badge">${future?'':winnerBadge(ds,true)}</div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="month-nav">
+      <button class="month-nav-btn" id="btnPrevMonth">◀</button>
+      <span class="month-title">${MONTHS[month-1]} ${year}</span>
+      <button class="month-nav-btn" id="btnNextMonth">▶</button>
+    </div>
+    <div class="month-mini-cards">
+      <div class="mini-card alex-card"><div class="mini-card-pts">${ma}</div><div class="mini-card-sub">💙 Alex · ${wa} vitórias</div></div>
+      <div class="mini-card ket-card"> <div class="mini-card-pts">${mk}</div><div class="mini-card-sub">💗 Kétellyn · ${wk} vitórias</div></div>
+    </div>
+    <div class="period-summary">
+      <div class="period-header">
+        <div>Dia</div><div class="col-alex">💙 Alex</div><div class="col-ket">💗 Ket</div><div class="col-win">+</div>
+      </div>
+      ${rows}
+    </div>
+    ${buildWinnerSection('monthly', monthKey, ma, mk)}`;
+}
+
+// ---- WINNER SECTION ----
+function buildWinnerSection(type, key, alexPts, ketPts) {
+  if(alexPts===0&&ketPts===0) return '';
+  const winner=getPeriodWinner(alexPts,ketPts);
+  const prizes=getActivePrizes(type);
+  const label=type==='weekly'?'da Semana':'do Mês';
+  const icon=type==='weekly'?'🎡':'🎰';
+
+  if(!winner) {
+    return `<div class="tie-section">🤝 Empate! Nenhuma roleta disponível quando há empate.</div>`;
+  }
+
+  const spin=getSpinForKey(key);
+  const wName=winner==='alex'?'Alex':'Kétellyn';
+  const wEmoji=winner==='alex'?'💙':'💗';
+  const wColor=winner==='alex'?'var(--alex)':'var(--ket)';
+  const loser=winner==='alex'?'ketellyn':'alex';
+  const lName=loser==='alex'?'Alex':'Kétellyn';
+  const diff=Math.abs(alexPts-ketPts);
+
+  if(spin) {
+    return `<div class="already-spun-section">
+      <div style="font-size:.72rem;color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+        ${icon} Roleta ${label} girada!
+      </div>
+      <div style="font-size:1.4rem;margin-bottom:4px">${spin.prize.emoji}</div>
+      <div style="font-size:.95rem;font-weight:900;color:var(--gold)">${spin.prize.label}</div>
+      <div style="font-size:.75rem;color:var(--text-dim);margin-top:4px">Girado em ${spin.date} · Ver em Ranking → Vales</div>
+    </div>`;
+  }
+
+  return `<div class="winner-section">
+    <div class="ws-label">🏆 Vencedor ${label}</div>
+    <div class="ws-name" style="color:${wColor}">${wEmoji} ${wName}!</div>
+    <div class="ws-pts">Vantagem de ${diff} pontos sobre ${lName}</div>
+    <button class="spin-btn" id="btnSpinNow">${icon} Girar Roleta ${label}</button>
+    <div style="margin-top:10px"><button class="prize-config-link" id="btnOpenPrizes">⚙️ Configurar prêmios</button></div>
+  </div>`;
+}
+
+// ---- RANKING ----
+function buildRankingTab() {
+  const at=ptsTotal('alex'), kt=ptsTotal('ketellyn');
+  const ad=tasksDone('alex'), kd=tasksDone('ketellyn');
+  const allDates=[...new Set(state.completions.map(c=>c.date))];
+  const aw=daysWon('alex',allDates), kw=daysWon('ketellyn',allDates);
+  const total=at+kt;
+  const aPct=total>0?Math.max(8,Math.round((at/total)*100)):50;
+  const kPct=100-aPct;
+
+  let leaderHtml='';
+  if(total>0){
+    const leader=at>kt?'💙 Alex está liderando!':kt>at?'💗 Kétellyn está liderando!':'🤝 Empate perfeito!';
+    leaderHtml=`<div class="leader-banner"><div class="lbl">Placar geral</div><div class="val">${leader}</div></div>`;
+  }
+
+  const barHtml=total>0?`
+    <div class="comparison-block">
+      <h3>⚡ Distribuição de pontos totais</h3>
+      <div class="bar-labels"><span style="color:var(--alex)">💙 Alex ${aPct}%</span><span style="color:var(--ket)">💗 Ket ${kPct}%</span></div>
+      <div class="bar-track">
+        <div class="bar-alex" style="width:${aPct}%">${aPct>18?`<span class="bar-lbl">${at}</span>`:''}</div>
+        <div class="bar-ket"  style="width:${kPct}%">${kPct>18?`<span class="bar-lbl">${kt}</span>`:''}</div>
+      </div>
+    </div>`
+  :`<div class="comparison-block" style="text-align:center;padding:24px;">
+      <div style="font-size:2rem;margin-bottom:8px">🚀</div>
+      <div style="color:var(--text-dim);font-size:.9rem">Complete tarefas para ver as estatísticas!</div>
+    </div>`;
+
+  return `
+    ${leaderHtml}
+    <div class="ranking-cards">
+      ${buildRankCard('alex','Alex','🚀',at,ad,aw)}
+      ${buildRankCard('ketellyn','Kétellyn','💫',kt,kd,kw)}
+    </div>
+    ${barHtml}
+    ${buildValesSection()}`;
+}
+
+function buildRankCard(assignee,name,emoji,total,done,wins) {
+  const lv=getLevel(total), prog=getLevelProgress(total);
+  const cls=assignee==='alex'?'alex':'ket';
+  return `<div class="rank-card ${cls}">
+    <div class="rank-avatar">${emoji}</div>
+    <div class="rank-name">${name}</div>
+    <div class="rank-level">${lv.emoji} ${lv.name}</div>
+    <div class="level-bar-wrap"><div class="level-bar-fill" style="width:${prog}%"></div></div>
+    <div class="rank-total">${total}</div>
+    <div class="rank-total-label">⚡ pontos totais</div>
+    <div class="rank-stats">
+      <div class="rank-stat"><div class="rank-stat-val">${done}</div><div class="rank-stat-label">Tarefas feitas</div></div>
+      <div class="rank-stat"><div class="rank-stat-val">${wins}</div><div class="rank-stat-label">Dias vencidos</div></div>
+    </div>
+  </div>`;
+}
+
+// ---- VALES SECTION ----
+function buildValesSection() {
+  const active=state.vales.filter(v=>v.status==='active');
+  const past=state.vales.filter(v=>v.status!=='active');
+
+  if(state.vales.length===0) {
+    return `<div class="vales-section">
+      <div class="section-divider"></div>
+      <h3>🎫 Vales</h3>
+      <div class="empty-state" style="padding:20px;background:var(--surface);border-radius:var(--r);border:1px solid var(--border)">
+        Nenhum vale ainda!<br>Vença uma semana ou mês para girar a roleta 🎡
+      </div>
+    </div>`;
+  }
+
+  const activeHtml=active.length===0?'':`
+    <div style="margin-bottom:6px;font-size:.72rem;font-weight:700;color:var(--gold)">ATIVOS (${active.length})</div>
+    <div class="vales-list">${active.map(v=>buildValeCard(v,true)).join('')}</div>`;
+
+  const pastHtml=past.length===0?'':`
+    <div style="margin:14px 0 6px;font-size:.72rem;font-weight:700;color:var(--text-dim)">HISTÓRICO</div>
+    <div class="vales-list">${past.map(v=>buildValeCard(v,false)).join('')}</div>`;
+
+  return `<div class="vales-section">
+    <div class="section-divider"></div>
+    <h3>🎫 Vales</h3>
+    ${activeHtml}${pastHtml}
+  </div>`;
+}
+
+function buildValeCard(vale, isActive) {
+  const { prize, winner, type, status, createdAt, penaltyDeducted, penaltyBonus } = vale;
+  const wName=winner==='alex'?'Alex':'Kétellyn';
+  const wEmoji=winner==='alex'?'💙':'💗';
+  const typeLabel=type==='weekly'?'Semana':'Mês';
+  const dateLabel=new Date(createdAt).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+  const monthlyClass=type==='monthly'?'monthly':'';
+
+  let statusHtml='';
+  if(status==='fulfilled') statusHtml=`<span class="vale-status-badge fulfilled">✓ Cumprido</span>`;
+  if(status==='broken')    statusHtml=`<span class="vale-status-badge broken">✗ Não cumpriu</span>
+    ${penaltyDeducted?`<div class="vale-penalty">Penalidade aplicada: -${penaltyDeducted}pts / +${penaltyBonus}pts</div>`:''}`;
+
+  const actions=isActive?`
+    <div class="vale-actions">
+      <button class="btn-fulfill" onclick="fulfillVale('${vale.id}')">✓ Cumpriu</button>
+      <button class="btn-break"   onclick="breakVale('${vale.id}')">✗ Não Cumpriu</button>
+    </div>`:'';
+
+  return `<div class="vale-card ${monthlyClass} ${status!=='active'?status:''}">
+    <div class="vale-icon">${prize.emoji}</div>
+    <div class="vale-info">
+      <div class="vale-title">${prize.label}</div>
+      <div class="vale-meta">${wEmoji} ${wName} · ${typeLabel} · ${dateLabel}</div>
+      <div class="vale-desc">${prize.desc}</div>
+      ${statusHtml}
+    </div>
+    ${actions}
+  </div>`;
+}
+
+// ======================== PRIZE CONFIG ========================
+const PRIZE_COLORS = ['#1e88e5','#e64a19','#8e24aa','#2e7d32','#c62828','#4527a0','#b71c1c','#00695c','#bf360c','#e65100','#0277bd','#388e3c','#880e4f','#00838f','#ad1457','#1565c0'];
+let prizeTabActive = 'weekly';
+let editingPrize = null; // {type, id} or {type, id:'__new__'}
+
+function openPrizesModal(defaultTab='weekly') {
+  prizeTabActive = defaultTab;
+  editingPrize = null;
+  renderPrizesBody(prizeTabActive);
+  document.getElementById('modalPrizes').hidden = false;
+}
+
+function renderPrizesBody(type) {
+  prizeTabActive = type;
+  const prizes = state.prizes[type] || [];
+
+  const prizeItems = prizes.map(p => {
+    const isEdit = editingPrize && editingPrize.type===type && editingPrize.id===p.id;
+    if(isEdit) return buildPrizeEditForm(type, p);
+    const dis = p.enabled===false;
+    return `<div class="prize-item ${dis?'disabled':''}">
+      <button class="prize-onoff ${dis?'off':'on'}" onclick="togglePrize('${type}','${p.id}')">${dis?'○':'●'}</button>
+      <div class="prize-info">
+        <div class="prize-emoji-name">${p.emoji} ${esc(p.label)}</div>
+        <div class="prize-desc-small">${esc(p.desc)}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <button class="icon-btn" onclick="startEditPrize('${type}','${p.id}')" title="Editar">✏️</button>
+        <button class="icon-btn delete" onclick="deletePrize('${type}','${p.id}')" title="Remover">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const isAddNew = editingPrize && editingPrize.type===type && editingPrize.id==='__new__';
+  const activeCount = prizes.filter(p=>p.enabled!==false).length;
+
+  document.getElementById('prizesBody').innerHTML = `
+    <div class="prize-type-tabs">
+      <button class="prize-type-tab ${type==='weekly'?'active':''}" onclick="renderPrizesBody('weekly')">🎡 Semanal</button>
+      <button class="prize-type-tab ${type==='monthly'?'active':''}" onclick="renderPrizesBody('monthly')">🎰 Mensal</button>
+    </div>
+    <div style="font-size:.72rem;color:var(--text-dim);font-weight:700;margin-bottom:10px;">${activeCount} prêmio${activeCount!==1?'s':''} ativo${activeCount!==1?'s':''} na roleta · Mínimo 2</div>
+    <div class="prizes-list">${prizeItems||'<div class="empty-state" style="padding:16px">Nenhum prêmio. Adicione um!</div>'}</div>
+    ${isAddNew ? buildPrizeEditForm(type, null) : ''}
+    <div class="prizes-footer">
+      <button class="add-task-btn" onclick="startAddPrize('${type}')">➕ Novo Prêmio</button>
+      <button class="btn-danger" style="padding:10px 14px;white-space:nowrap;" onclick="resetPrizes('${type}')">↺ Padrões</button>
+    </div>`;
+}
+
+function buildPrizeEditForm(type, prize) {
+  const id = prize ? prize.id : '__new__';
+  return `<div class="prize-edit-form">
+    <div style="font-size:.72rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">
+      ${prize ? '✏️ Editar Prêmio' : '➕ Novo Prêmio'}
+    </div>
+    <div class="prize-edit-row">
+      <div><label class="form-label">Emoji</label>
+           <input class="form-input" id="pe_emoji" value="${prize?prize.emoji:''}" placeholder="🎁" maxlength="4" style="text-align:center;font-size:1.3rem;padding:8px;"/></div>
+      <div><label class="form-label">Nome</label>
+           <input class="form-input" id="pe_label" value="${prize?esc(prize.label):''}" placeholder="Nome do prêmio"/></div>
+    </div>
+    <div style="margin-bottom:12px"><label class="form-label">Descrição</label>
+      <input class="form-input" id="pe_desc" value="${prize?esc(prize.desc):''}" placeholder="O que esse vale permite..."/></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-sm" onclick="savePrize('${type}','${id}')">✓ Salvar</button>
+      <button class="btn-sm-ghost" onclick="cancelEditPrize('${type}')">Cancelar</button>
+    </div>
+  </div>`;
+}
+
+function togglePrize(type, id) {
+  const p = state.prizes[type].find(x=>x.id===id);
+  if(!p) return;
+  const wouldDisable = p.enabled!==false;
+  const activeNow = state.prizes[type].filter(x=>x.enabled!==false).length;
+  if(wouldDisable && activeNow <= 2) { alert('A roleta precisa de pelo menos 2 prêmios ativos.'); return; }
+  p.enabled = p.enabled===false;
+  saveState(); renderPrizesBody(type);
+}
+
+function startEditPrize(type, id) { editingPrize={type,id}; renderPrizesBody(type); }
+function startAddPrize(type)       { editingPrize={type,id:'__new__'}; renderPrizesBody(type); }
+function cancelEditPrize(type)     { editingPrize=null; renderPrizesBody(type); }
+
+function savePrize(type, id) {
+  const emoji = document.getElementById('pe_emoji').value.trim() || '🎁';
+  const label = document.getElementById('pe_label').value.trim();
+  const desc  = document.getElementById('pe_desc').value.trim();
+  if(!label) { document.getElementById('pe_label').focus(); return; }
+  const shortLabel = label.replace(/^Vale\s*/i,'').slice(0,10).trim();
+
+  if(id==='__new__') {
+    const col = PRIZE_COLORS[state.prizes[type].length % PRIZE_COLORS.length];
+    state.prizes[type].push({ id:uid(), emoji, label, shortLabel, color:col, desc, enabled:true });
+  } else {
+    const p = state.prizes[type].find(x=>x.id===id);
+    if(p) { p.emoji=emoji; p.label=label; p.shortLabel=shortLabel; p.desc=desc; }
+  }
+  editingPrize = null;
+  saveState(); renderPrizesBody(type);
+}
+
+function deletePrize(type, id) {
+  const active = state.prizes[type].filter(p=>p.enabled!==false&&p.id!==id).length;
+  if(active < 2) { alert('A roleta precisa de pelo menos 2 prêmios ativos.'); return; }
+  if(!confirm('Remover este prêmio?')) return;
+  state.prizes[type] = state.prizes[type].filter(p=>p.id!==id);
+  saveState(); renderPrizesBody(type);
+}
+
+function resetPrizes(type) {
+  if(!confirm('Restaurar prêmios padrão? Prêmios personalizados serão removidos.')) return;
+  const defs = type==='weekly' ? WEEKLY_PRIZES : MONTHLY_PRIZES;
+  state.prizes[type] = defs.map(p=>({...p,enabled:true}));
+  editingPrize = null;
+  saveState(); renderPrizesBody(type);
+}
+
+// ======================== TAB EVENTS ========================
+function bindTabEvents() {
+  if(currentTab==='dia') {
+    document.querySelectorAll('.task-item').forEach(el=>el.addEventListener('click',onTaskClick));
+  }
+  if(currentTab==='semana') {
+    document.getElementById('btnSpinNow')?.addEventListener('click',()=>{
+      const key=getWeekKey(todayStr());
+      const days=getWeekDays(todayStr());
+      const past=days.filter(d=>d<=todayStr());
+      const wa=past.reduce((s,d)=>s+ptsForDate('alex',d),0);
+      const wk=past.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
+      const winner=getPeriodWinner(wa,wk);
+      if(winner) openRouletteModal('weekly',key,winner,getActivePrizes('weekly'));
+    });
+    document.getElementById('btnOpenPrizes')?.addEventListener('click',()=>openPrizesModal('weekly'));
+  }
+  if(currentTab==='mes') {
+    document.getElementById('btnPrevMonth')?.addEventListener('click',()=>{
+      monthRef.month--; if(monthRef.month<1){monthRef.month=12;monthRef.year--;}; renderTab();
+    });
+    document.getElementById('btnNextMonth')?.addEventListener('click',()=>{
+      monthRef.month++; if(monthRef.month>12){monthRef.month=1;monthRef.year++;}; renderTab();
+    });
+    document.getElementById('btnSpinNow')?.addEventListener('click',()=>{
+      const {year,month}=monthRef;
+      const key=getMonthKey(year,month);
+      const days=getMonthDays(year,month);
+      const today=todayStr();
+      const past=days.filter(d=>d<=today);
+      const ma=past.reduce((s,d)=>s+ptsForDate('alex',d),0);
+      const mk=past.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
+      const winner=getPeriodWinner(ma,mk);
+      if(winner) openRouletteModal('monthly',key,winner,getActivePrizes('monthly'));
+    });
+    document.getElementById('btnOpenPrizes')?.addEventListener('click',()=>openPrizesModal('monthly'));
+  }
+}
+
+function onTaskClick(e) {
+  const el=e.currentTarget;
+  const completed=toggleCompletion(el.dataset.task,el.dataset.who,el.dataset.date);
+  if(completed){
+    const task=state.tasks.find(t=>t.id===el.dataset.task);
+    spawnPopup(e.clientX,e.clientY,task.points,el.dataset.who==='alex'?'#4fc3f7':'#f48fb1');
+  }
+  renderTab();
+}
+
+function spawnPopup(x,y,pts,color) {
+  const el=document.createElement('div');
+  el.className='point-popup';
+  el.style.cssText=`left:${x-22}px;top:${y-30}px;color:${color};text-shadow:0 0 12px ${color}80;`;
+  el.textContent=`+${pts} ⚡`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),900);
+}
+
+// ======================== MANAGE MODAL ========================
+let dragSrc=null;
+
+function openManageModal() { renderManageBody(); document.getElementById('modalManage').hidden=false; }
+
+function renderManageBody() {
+  const sorted=[...state.tasks].sort((a,b)=>(a.order||0)-(b.order||0));
+  const listHtml=sorted.map((t,i)=>{
+    const ab=t.assignee==='alex'?'badge-alex':t.assignee==='ketellyn'?'badge-ket':'badge-ambos';
+    const al=t.assignee==='alex'?'💙 Alex':t.assignee==='ketellyn'?'💗 Kétellyn':'🤝 Ambos';
+    const dayLabel=t.type==='recorrente'&&t.days.length>0
+      ?`<span class="badge badge-ambos">${t.days.map(d=>DAY_SHORT[d]).join(', ')}</span>`
+      :t.type==='recorrente'?`<span class="badge badge-ambos">Todos os dias</span>`
+      :t.date?`<span class="badge badge-ambos">${t.date}</span>`:'';
+    return `<div class="manage-task-item" draggable="true" data-idx="${i}" data-tid="${t.id}">
+      <div class="drag-handle">⠿</div>
+      <div class="manage-task-info">
+        <div class="manage-task-title">${esc(t.title)} · ${t.points}⚡</div>
+        <div class="manage-task-meta">
+          <span class="badge ${ab}">${al}</span>
+          <span class="badge ${t.type==='recorrente'?'badge-rec':'badge-avulso'}">${t.type==='recorrente'?'🔄 Recorrente':'📌 Avulso'}</span>
+          ${dayLabel}
+        </div>
+      </div>
+      <div class="manage-task-btns">
+        <button class="icon-btn btn-edit" data-tid="${t.id}">✏️</button>
+        <button class="icon-btn delete btn-del" data-tid="${t.id}">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('manageBody').innerHTML=`
+    <button class="add-task-btn" id="btnAddTask">➕ Adicionar Tarefa</button>
+    <div class="manage-list" id="manageList">${listHtml||'<div class="empty-state">Nenhuma tarefa. Adicione a primeira!</div>'}</div>`;
+
+  document.getElementById('btnAddTask').addEventListener('click',()=>openTaskModal(null));
+  document.querySelectorAll('.btn-edit').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openTaskModal(b.dataset.tid);}));
+  document.querySelectorAll('.btn-del').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeTask(b.dataset.tid);}));
+  initDragDrop();
+}
+
+function initDragDrop() {
+  document.querySelectorAll('.manage-task-item').forEach(item=>{
+    item.addEventListener('dragstart',e=>{dragSrc=parseInt(item.dataset.idx);item.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    item.addEventListener('dragend',()=>{item.classList.remove('dragging');document.querySelectorAll('.manage-task-item').forEach(i=>{i.style.borderColor='';i.style.background='';});});
+    item.addEventListener('dragover',e=>{e.preventDefault();item.style.borderColor='rgba(255,255,255,.4)';item.style.background='rgba(255,255,255,.08)';});
+    item.addEventListener('dragleave',()=>{item.style.borderColor='';item.style.background='';});
+    item.addEventListener('drop',e=>{
+      e.preventDefault();item.style.borderColor='';item.style.background='';
+      const dst=parseInt(item.dataset.idx);
+      if(dragSrc===null||dragSrc===dst) return;
+      const s=[...state.tasks].sort((a,b)=>(a.order||0)-(b.order||0));
+      const [m]=s.splice(dragSrc,1);s.splice(dst,0,m);s.forEach((t,i)=>t.order=i);
+      saveState();renderManageBody();if(currentTab==='dia')renderTab();dragSrc=null;
+    });
+  });
+}
+
+function removeTask(taskId) {
+  if(!confirm('Apagar esta tarefa e seu histórico?')) return;
+  state.tasks=state.tasks.filter(t=>t.id!==taskId);
+  state.completions=state.completions.filter(c=>c.taskId!==taskId);
+  saveState();renderManageBody();renderTab();
+}
+
+// ======================== TASK MODAL ========================
+let editId=null, selAssignee='alex', selType='recorrente', selDays=[];
+
+function openTaskModal(taskId) {
+  editId=taskId;
+  const task=taskId?state.tasks.find(t=>t.id===taskId):null;
+  document.getElementById('taskModalTitle').textContent=task?'✏️ Editar Tarefa':'➕ Nova Tarefa';
+  document.getElementById('inputTitle').value=task?task.title:'';
+  document.getElementById('inputPoints').value=task?task.points:10;
+  document.getElementById('inputDate').value=task?.date||todayStr();
+  selAssignee=task?task.assignee:'alex';
+  selType=task?task.type:'recorrente';
+  selDays=task?[...(task.days||[])]:[];
+  syncAssigneeUI();syncTypeUI();
+  const actEl=document.getElementById('taskFormActions');
+  if(task){
+    actEl.innerHTML=`<button class="btn-danger" id="btnDelEdit">🗑️ Apagar</button><button class="btn-primary" id="btnSaveTask">Salvar</button>`;
+    document.getElementById('btnDelEdit').addEventListener('click',()=>{
+      if(!confirm('Apagar esta tarefa?')) return;
+      state.tasks=state.tasks.filter(t=>t.id!==editId);
+      state.completions=state.completions.filter(c=>c.taskId!==editId);
+      saveState();closeTaskModal();renderManageBody();renderTab();
+    });
+  } else {
+    actEl.innerHTML=`<button class="btn-primary" id="btnSaveTask">Salvar Tarefa</button>`;
+  }
+  document.getElementById('btnSaveTask').addEventListener('click',saveTask);
+  document.getElementById('modalTask').hidden=false;
+  document.getElementById('inputTitle').focus();
+}
+
+function syncAssigneeUI() { document.querySelectorAll('#assigneeGroup .toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===selAssignee)); }
+function syncTypeUI() {
+  document.querySelectorAll('#typeGroup .toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===selType));
+  document.getElementById('daysGroup').style.display=selType==='recorrente'?'':'none';
+  document.getElementById('dateGroup').style.display=selType==='avulso'?'':'none';
+  buildDayToggles();
+}
+function buildDayToggles() {
+  const c=document.getElementById('dayToggles');
+  c.innerHTML=DAY_SHORT.map((nm,i)=>`<button class="day-toggle ${selDays.includes(i)?'active':''}" data-d="${i}">${nm}</button>`).join('');
+  c.querySelectorAll('.day-toggle').forEach(b=>b.addEventListener('click',()=>{
+    const d=parseInt(b.dataset.d);
+    selDays.includes(d)?(selDays=selDays.filter(x=>x!==d)):selDays.push(d);buildDayToggles();
+  }));
+}
+function saveTask() {
+  const title=document.getElementById('inputTitle').value.trim();
+  const points=Math.max(1,parseInt(document.getElementById('inputPoints').value)||10);
+  if(!title){document.getElementById('inputTitle').focus();return;}
+  if(editId){
+    const t=state.tasks.find(x=>x.id===editId);
+    if(t){t.title=title;t.points=points;t.assignee=selAssignee;t.type=selType;t.days=selType==='recorrente'?[...selDays]:[];t.date=selType==='avulso'?document.getElementById('inputDate').value:undefined;}
+  } else {
+    const maxOrd=state.tasks.reduce((m,t)=>Math.max(m,t.order||0),-1);
+    state.tasks.push({id:uid(),title,points,assignee:selAssignee,type:selType,days:selType==='recorrente'?[...selDays]:[],date:selType==='avulso'?document.getElementById('inputDate').value:undefined,order:maxOrd+1});
+  }
+  saveState();closeTaskModal();renderManageBody();renderTab();
+}
+function closeTaskModal(){document.getElementById('modalTask').hidden=true;editId=null;}
+
+// ======================== UTILS ========================
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ======================== INIT ========================
+loadState();
+renderApp();
+
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');currentTab=b.dataset.tab;renderTab();
+}));
+
+document.getElementById('btnManage').addEventListener('click',openManageModal);
+document.getElementById('btnCloseManage').addEventListener('click',()=>{document.getElementById('modalManage').hidden=true;});
+document.getElementById('modalManage').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalManage').hidden=true;});
+
+document.getElementById('btnCloseTask').addEventListener('click',closeTaskModal);
+document.getElementById('modalTask').addEventListener('click',e=>{if(e.target===e.currentTarget)closeTaskModal();});
+
+document.getElementById('btnClosePrizes').addEventListener('click',()=>{document.getElementById('modalPrizes').hidden=true;});
+document.getElementById('modalPrizes').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalPrizes').hidden=true;});
+
+document.getElementById('btnCloseRoulette').addEventListener('click',()=>{document.getElementById('modalRoulette').hidden=true;});
+document.getElementById('modalRoulette').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalRoulette').hidden=true;});
+
+document.getElementById('assigneeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selAssignee=b.dataset.val;syncAssigneeUI();});
+document.getElementById('typeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selType=b.dataset.val;syncTypeUI();});
+
+buildDayToggles();
+</script>
+</body>
+</html>
