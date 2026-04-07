@@ -113,6 +113,40 @@
     .score-label { font-size: .7rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
     .empty-state { padding: 28px 16px; text-align: center; color: var(--text-dim); font-size: .85rem; line-height: 1.6; }
 
+    /* ===== CATEGORY HEADERS ===== */
+    .cat-header {
+      display: flex; align-items: center; gap: 7px;
+      padding: 6px 16px 4px;
+      font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--cat-color, var(--text-dim));
+      border-left: 3px solid var(--cat-color, var(--border));
+      background: rgba(255,255,255,.02);
+      margin-top: 4px;
+    }
+    .cat-header:first-child { margin-top: 0; }
+    .cat-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cat-color, var(--text-dim));
+      flex-shrink: 0;
+    }
+    .cat-toggle-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 7px;
+    }
+    .cat-toggle-btn {
+      padding: 8px 10px; border-radius: var(--r-sm);
+      border: 2px solid rgba(255,255,255,.08);
+      background: transparent; color: var(--text-dim);
+      font-family: inherit; font-size: .78rem; font-weight: 700;
+      cursor: pointer; transition: all .18s; text-align: left;
+    }
+    .cat-toggle-btn.active {
+      border-color: var(--cat-color, white);
+      background: var(--surface2);
+      color: var(--cat-color, white);
+    }
+    .cat-stat-row { display: flex; flex-direction: column; gap: 2px; }
+    .cat-stat-hdr { display: flex; justify-content: space-between; align-items: center; font-size: .82rem; }
+
     /* ===== WEEK / MONTH ===== */
     .period-summary { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; }
     .period-header { display: grid; grid-template-columns: 1fr 80px 80px 80px; padding: 10px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
@@ -559,6 +593,10 @@
           <button class="toggle-btn" data-val="ambos">🤝 Ambos</button>
         </div>
       </div>
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <div class="cat-toggle-grid" id="categoryGroup"></div>
+      </div>
       <div class="form-group" id="daysGroup">
         <label class="form-label">Dias da semana <span style="font-weight:400;text-transform:none;font-size:.9em;">(nenhum = todos)</span></label>
         <div class="day-toggles" id="dayToggles"></div>
@@ -663,6 +701,19 @@ const LEVELS     = [
   { min: 2000, emoji: '🚀', name: 'Foguete',     next: null },
 ];
 
+const TASK_CATEGORIES = [
+  { id:'alimentacao', emoji:'🍽️', label:'Alimentação',  color:'#ff8a65' },
+  { id:'limpeza',     emoji:'🧹',  label:'Limpeza',      color:'#4fc3f7' },
+  { id:'saude',       emoji:'💪',  label:'Saúde',        color:'#69f0ae' },
+  { id:'espiritual',  emoji:'🙏',  label:'Espiritual',   color:'#ce93d8' },
+  { id:'compromissos',emoji:'📋',  label:'Compromissos', color:'#ffd54f' },
+  { id:'casa',        emoji:'🏠',  label:'Casa',         color:'#80cbc4' },
+  { id:'financeiro',  emoji:'💰',  label:'Financeiro',   color:'#a5d6a7' },
+  { id:'outros',      emoji:'✨',  label:'Outros',       color:'#b0bec5' },
+];
+const CAT_MAP = Object.fromEntries(TASK_CATEGORIES.map(c=>[c.id,c]));
+function getCategory(task) { return CAT_MAP[task.category] || CAT_MAP['outros']; }
+
 const WEEKLY_PRIZES = [
   { id:'louça',    emoji:'🍽️', label:'Vale Louça',    shortLabel:'Louça',   color:'#1e88e5',
     desc:'Pede pro outro lavar a louça do dia que escolher' },
@@ -724,12 +775,12 @@ function uid() { return Math.random().toString(36).slice(2,9) + Date.now().toStr
 function defaultState() {
   return {
     tasks: [
-      { id: uid(), title: '☕ Fazer café',       points: 10, assignee: 'alex',     type: 'recorrente', days: [],      order: 0 },
-      { id: uid(), title: '🗑️ Tirar o lixo',    points: 10, assignee: 'alex',     type: 'recorrente', days: [1,3,5], order: 1 },
-      { id: uid(), title: '🛏️ Arrumar a cama',  points: 10, assignee: 'ketellyn', type: 'recorrente', days: [],      order: 0 },
-      { id: uid(), title: '🧺 Lavar roupa',      points: 20, assignee: 'ketellyn', type: 'recorrente', days: [2,4,6], order: 1 },
-      { id: uid(), title: '🍽️ Lavar louça',     points: 15, assignee: 'ambos',    type: 'recorrente', days: [],      order: 2 },
-      { id: uid(), title: '🧹 Limpar a casa',    points: 25, assignee: 'ambos',    type: 'recorrente', days: [6],     order: 3 },
+      { id: uid(), title: '☕ Fazer café',       points: 10, assignee: 'alex',     type: 'recorrente', days: [],      order: 0, category:'alimentacao' },
+      { id: uid(), title: '🗑️ Tirar o lixo',    points: 10, assignee: 'alex',     type: 'recorrente', days: [1,3,5], order: 1, category:'limpeza' },
+      { id: uid(), title: '🛏️ Arrumar a cama',  points: 10, assignee: 'ketellyn', type: 'recorrente', days: [],      order: 0, category:'casa' },
+      { id: uid(), title: '🧺 Lavar roupa',      points: 20, assignee: 'ketellyn', type: 'recorrente', days: [2,4,6], order: 1, category:'limpeza' },
+      { id: uid(), title: '🍽️ Lavar louça',     points: 15, assignee: 'ambos',    type: 'recorrente', days: [],      order: 2, category:'limpeza' },
+      { id: uid(), title: '🧹 Limpar a casa',    points: 25, assignee: 'ambos',    type: 'recorrente', days: [6],     order: 3, category:'limpeza' },
     ],
     completions: [],
     adjustments: [],
@@ -757,6 +808,8 @@ function _migrateState() {
   if (!state.shopItems)  state.shopItems  = DEFAULT_SHOP_ITEMS.map(i=>({...i}));
   if (!state.purchases)  state.purchases  = [];
   if (!state.extraSpins) state.extraSpins = [];
+  // Garante categoria em todas as tarefas existentes
+  state.tasks.forEach(t => { if (!t.category) t.category = 'outros'; });
 }
 
 // Timeout compatível com Android antigo (sem AbortSignal.timeout)
@@ -1172,18 +1225,36 @@ function buildPersonCol(assignee,name,emoji,dateStr) {
   const pts=ptsForDate(assignee,dateStr);
   const done=tasks.filter(t=>isCompleted(t.id,assignee,dateStr)).length;
 
-  const taskHtml=tasks.length===0
-    ?`<div class="empty-state">Sem tarefas hoje!<br>🎉 Dia livre!</div>`
-    :tasks.map(t=>{
-      const checked=isCompleted(t.id,assignee,dateStr);
-      return `<div class="task-item ${checked?'completed':''}" data-task="${t.id}" data-who="${assignee}" data-date="${dateStr}">
-        <div class="task-check ${checked?'checked':''}">${checked?'✓':''}</div>
-        <div class="task-info">
-          <div class="task-title">${esc(t.title)}</div>
-          <div class="task-pts">⚡ ${t.points} pts</div>
-        </div>
+  let taskHtml='';
+  if(tasks.length===0) {
+    taskHtml=`<div class="empty-state">Sem tarefas hoje!<br>🎉 Dia livre!</div>`;
+  } else {
+    // Agrupar por categoria
+    const groups=new Map();
+    tasks.forEach(t=>{
+      const cid=t.category||'outros';
+      if(!groups.has(cid)) groups.set(cid,[]);
+      groups.get(cid).push(t);
+    });
+    // Exibir na ordem de TASK_CATEGORIES
+    TASK_CATEGORIES.forEach(cat=>{
+      const catTasks=groups.get(cat.id);
+      if(!catTasks||catTasks.length===0) return;
+      taskHtml+=`<div class="cat-header" style="--cat-color:${cat.color}">
+        <span class="cat-dot"></span><span>${cat.emoji} ${cat.label}</span>
       </div>`;
-    }).join('');
+      taskHtml+=catTasks.map(t=>{
+        const checked=isCompleted(t.id,assignee,dateStr);
+        return `<div class="task-item ${checked?'completed':''}" data-task="${t.id}" data-who="${assignee}" data-date="${dateStr}">
+          <div class="task-check ${checked?'checked':''}">${checked?'✓':''}</div>
+          <div class="task-info">
+            <div class="task-title">${esc(t.title)}</div>
+            <div class="task-pts">⚡ ${t.points} pts</div>
+          </div>
+        </div>`;
+      }).join('');
+    });
+  }
 
   return `<div class="person-col ${cls}">
     <div class="person-header ${cls}">
@@ -1321,21 +1392,34 @@ function buildWinnerSection(type, key, alexPts, ketPts) {
   // --- Extra spin token check ---
   const hasExtra = hasExtraSpinToken(type);
 
-  // --- Domingo check (semanal) ---
-  // Roleta semanal só abre no Domingo, depois que a semana (Dom–Sáb) terminou
+  // --- Lock checks por tipo ---
   const _today = todayStr();
-  const _isSunday = new Date().getDay() === 0;
-  let _weeklyUnlocked = true;
-  let _weeklyLockReason = '';
+  const _now   = new Date();
+  let _periodUnlocked = true;
+  let _periodLockReason = '';
+
   if (type === 'weekly') {
+    // Semanal: só no Domingo após a semana (Dom–Sáb) terminar
     const _wDays = getWeekDays(key.replace('week_',''));
-    const _weekEnded = _wDays[6] < _today; // Sábado já passou?
+    const _isSunday  = _now.getDay() === 0;
+    const _weekEnded = _wDays[6] < _today;
     if (!_isSunday) {
-      _weeklyUnlocked = false;
-      _weeklyLockReason = '📅 Disponível toda Domingo';
+      _periodUnlocked   = false;
+      _periodLockReason = '📅 Disponível toda Domingo';
     } else if (!_weekEnded) {
-      _weeklyUnlocked = false;
-      _weeklyLockReason = '⏳ Semana ainda não terminou (aguarde o Sábado)';
+      _periodUnlocked   = false;
+      _periodLockReason = '⏳ Semana ainda não terminou (aguarde o Sábado)';
+    }
+  }
+
+  if (type === 'monthly') {
+    // Mensal: só no dia 1 do mês seguinte
+    const [_mYear, _mMonth] = key.replace('month_','').split('-').map(Number);
+    const _firstNextMonth = toStr(new Date(_mYear, _mMonth, 1)); // mês 0-indexed: _mMonth = próximo mês
+    if (_today !== _firstNextMonth) {
+      _periodUnlocked   = false;
+      const _nextMonthName = MONTHS[_mMonth % 12];
+      _periodLockReason = `📅 Disponível em 1º de ${_nextMonthName}`;
     }
   }
 
@@ -1343,12 +1427,12 @@ function buildWinnerSection(type, key, alexPts, ketPts) {
   let spinBtnHtml;
   if (spin) {
     // Already spun: show locked button + prize info
-    const extraOk = winner && hasExtra && _weeklyUnlocked;
+    const extraOk = winner && hasExtra && _periodUnlocked;
     const extraBtn = extraOk ? `
       <button class="spin-btn" id="btnSpinNow" style="margin-top:8px;background:linear-gradient(135deg,#f57f17,#bf360c)">🎡 Usar Giro Extra!</button>
       <div style="font-size:.7rem;color:var(--gold);text-align:center;margin-top:4px">1 giro extra disponível</div>`
-    : (winner && hasExtra && !_weeklyUnlocked) ? `
-      <button class="spin-btn spin-btn--locked" disabled style="margin-top:8px">🔒 Giro Extra · ${_weeklyLockReason}</button>` : '';
+    : (winner && hasExtra && !_periodUnlocked) ? `
+      <button class="spin-btn spin-btn--locked" disabled style="margin-top:8px">🔒 Giro Extra · ${_periodLockReason}</button>` : '';
     spinBtnHtml = `
       <button class="spin-btn spin-btn--done" disabled>✓ Roleta ${label} já girada</button>
       <div class="spin-already-result">
@@ -1364,11 +1448,10 @@ function buildWinnerSection(type, key, alexPts, ketPts) {
     spinBtnHtml = `
       <button class="spin-btn spin-btn--locked" disabled>🔒 Girar Roleta ${label}</button>
       <div class="spin-lock-reason">${reason}</div>`;
-  } else if (!_weeklyUnlocked) {
-    // Weekly but not Sunday / week not ended
+  } else if (!_periodUnlocked) {
     spinBtnHtml = `
       <button class="spin-btn spin-btn--locked" disabled>${icon} Girar Roleta ${label}</button>
-      <div class="spin-lock-reason">${_weeklyLockReason}</div>`;
+      <div class="spin-lock-reason">${_periodLockReason}</div>`;
   } else {
     // Has winner, unlocked: active
     spinBtnHtml = `<button class="spin-btn" id="btnSpinNow">${icon} Girar Roleta ${label}</button>`;
@@ -1419,6 +1502,7 @@ function buildRankingTab() {
       ${buildRankCard('ketellyn','Kétellyn','💫',kt,kd,kw)}
     </div>
     ${barHtml}
+    ${buildCategoryStats()}
     ${buildValesSection()}`;
 }
 
@@ -1436,6 +1520,47 @@ function buildRankCard(assignee,name,emoji,total,done,wins) {
       <div class="rank-stat"><div class="rank-stat-val">${done}</div><div class="rank-stat-label">Tarefas feitas</div></div>
       <div class="rank-stat"><div class="rank-stat-val">${wins}</div><div class="rank-stat-label">Dias vencidos</div></div>
     </div>
+  </div>`;
+}
+
+// ---- CATEGORY STATS ----
+function buildCategoryStats() {
+  const stats={};
+  TASK_CATEGORIES.forEach(c=>{ stats[c.id]={alex:0,ket:0}; });
+  state.completions.forEach(c=>{
+    const task=state.tasks.find(t=>t.id===c.taskId);
+    const cid=(task&&task.category)||'outros';
+    if(!stats[cid]) stats[cid]={alex:0,ket:0};
+    if(c.assignee==='alex') stats[cid].alex++;
+    else if(c.assignee==='ketellyn') stats[cid].ket++;
+  });
+  const active=TASK_CATEGORIES.filter(c=>(stats[c.id]?.alex||0)+(stats[c.id]?.ket||0)>0);
+  if(active.length===0) return '';
+
+  const rows=active.map(cat=>{
+    const s=stats[cat.id];
+    const total=s.alex+s.ket;
+    const aPct=Math.round((s.alex/total)*100);
+    const kPct=100-aPct;
+    return `<div class="cat-stat-row">
+      <div class="cat-stat-hdr">
+        <span style="font-weight:800">${cat.emoji} ${cat.label}</span>
+        <span style="color:var(--text-dim);font-size:.72rem">${total} tarefa${total!==1?'s':''}</span>
+      </div>
+      <div class="bar-track" style="height:8px;border-radius:4px;margin:5px 0 3px">
+        <div class="bar-alex" style="width:${aPct}%;border-radius:4px 0 0 4px"></div>
+        <div class="bar-ket"  style="width:${kPct}%;border-radius:0 4px 4px 0"></div>
+      </div>
+      <div class="bar-labels" style="font-size:.7rem">
+        <span style="color:var(--alex)">💙 Alex ${s.alex}</span>
+        <span style="color:var(--ket)">💗 Ket ${s.ket}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="comparison-block" style="margin-top:14px">
+    <h3>📊 Tarefas por Categoria</h3>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">${rows}</div>
   </div>`;
 }
 
@@ -1880,6 +2005,7 @@ function renderManageBody() {
         <div class="manage-task-meta">
           <span class="badge ${ab}">${al}</span>
           <span class="badge ${t.type==='recorrente'?'badge-rec':'badge-avulso'}">${t.type==='recorrente'?'🔄 Recorrente':'📌 Avulso'}</span>
+          ${(()=>{ const c=getCategory(t); return `<span class="badge" style="background:var(--surface2);color:${c.color}">${c.emoji} ${c.label}</span>`; })()}
           ${dayLabel}
         </div>
       </div>
@@ -1925,7 +2051,7 @@ function removeTask(taskId) {
 }
 
 // ======================== TASK MODAL ========================
-let editId=null, selAssignee='alex', selType='recorrente', selDays=[];
+let editId=null, selAssignee='alex', selType='recorrente', selDays=[], selCategory='outros';
 
 function openTaskModal(taskId) {
   editId=taskId;
@@ -1937,7 +2063,8 @@ function openTaskModal(taskId) {
   selAssignee=task?task.assignee:'alex';
   selType=task?task.type:'recorrente';
   selDays=task?[...(task.days||[])]:[];
-  syncAssigneeUI();syncTypeUI();
+  selCategory=task?(task.category||'outros'):'outros';
+  syncAssigneeUI();syncTypeUI();buildCategoryToggles();
   const actEl=document.getElementById('taskFormActions');
   if(task){
     actEl.innerHTML=`<button class="btn-danger" id="btnDelEdit">🗑️ Apagar</button><button class="btn-primary" id="btnSaveTask">Salvar</button>`;
@@ -1970,16 +2097,28 @@ function buildDayToggles() {
     selDays.includes(d)?(selDays=selDays.filter(x=>x!==d)):selDays.push(d);buildDayToggles();
   }));
 }
+function buildCategoryToggles() {
+  const c=document.getElementById('categoryGroup');
+  if(!c) return;
+  c.innerHTML=TASK_CATEGORIES.map(cat=>`
+    <button class="cat-toggle-btn ${selCategory===cat.id?'active':''}" data-cat="${cat.id}" style="--cat-color:${cat.color}">
+      ${cat.emoji} ${cat.label}
+    </button>`).join('');
+  c.querySelectorAll('.cat-toggle-btn').forEach(b=>b.addEventListener('click',()=>{
+    selCategory=b.dataset.cat; buildCategoryToggles();
+  }));
+}
+
 function saveTask() {
   const title=document.getElementById('inputTitle').value.trim();
   const points=Math.max(1,parseInt(document.getElementById('inputPoints').value)||10);
   if(!title){document.getElementById('inputTitle').focus();return;}
   if(editId){
     const t=state.tasks.find(x=>x.id===editId);
-    if(t){t.title=title;t.points=points;t.assignee=selAssignee;t.type=selType;t.days=selType==='recorrente'?[...selDays]:[];t.date=selType==='avulso'?document.getElementById('inputDate').value:undefined;}
+    if(t){t.title=title;t.points=points;t.assignee=selAssignee;t.type=selType;t.category=selCategory;t.days=selType==='recorrente'?[...selDays]:[];t.date=selType==='avulso'?document.getElementById('inputDate').value:undefined;}
   } else {
     const maxOrd=state.tasks.reduce((m,t)=>Math.max(m,t.order||0),-1);
-    state.tasks.push({id:uid(),title,points,assignee:selAssignee,type:selType,days:selType==='recorrente'?[...selDays]:[],date:selType==='avulso'?document.getElementById('inputDate').value:undefined,order:maxOrd+1});
+    state.tasks.push({id:uid(),title,points,assignee:selAssignee,type:selType,category:selCategory,days:selType==='recorrente'?[...selDays]:[],date:selType==='avulso'?document.getElementById('inputDate').value:undefined,order:maxOrd+1});
   }
   saveState();closeTaskModal();renderManageBody();renderTab();
 }
