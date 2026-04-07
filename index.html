@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.5, maximum-scale=5.0"/>
   <title>🚀 Rotina Foguete</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -22,6 +22,7 @@
       --r: 16px;
       --r-sm: 10px;
     }
+    html { font-size: 18px; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Nunito', system-ui, sans-serif;
@@ -69,8 +70,8 @@
     .manage-btn:hover { border-color: rgba(255,255,255,.3); color: var(--text); }
 
     /* ===== TABS ===== */
-    nav.tabs { display: flex; justify-content: center; gap: 6px; padding: 10px 16px 8px; position: sticky; top: 0; z-index: 50; background: rgba(7,7,26,.92); backdrop-filter: blur(14px); }
-    .tab-btn { padding: 8px 18px; border: 1px solid var(--border); border-radius: 50px; background: transparent; color: var(--text-dim); font-family: inherit; font-size: .85rem; font-weight: 800; cursor: pointer; transition: all .25s; white-space: nowrap; }
+    nav.tabs { display: flex; justify-content: center; gap: 6px; padding: 10px 12px 8px; position: sticky; top: 0; z-index: 50; background: rgba(7,7,26,.92); backdrop-filter: blur(14px); flex-wrap: wrap; }
+    .tab-btn { padding: 10px 16px; border: 1px solid var(--border); border-radius: 50px; background: transparent; color: var(--text-dim); font-family: inherit; font-size: .9rem; font-weight: 800; cursor: pointer; transition: all .25s; white-space: nowrap; }
     .tab-btn:hover { border-color: rgba(255,255,255,.2); color: var(--text); background: var(--surface); }
     .tab-btn.active { background: linear-gradient(135deg, rgba(79,195,247,.2), rgba(244,143,177,.2)); border-color: rgba(255,255,255,.25); color: white; box-shadow: 0 0 20px rgba(79,195,247,.12); }
 
@@ -79,7 +80,7 @@
 
     /* ===== DAY VIEW ===== */
     .day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 600px) { .day-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 460px) { .day-grid { grid-template-columns: 1fr; } }
     .person-col { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
     .person-header { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
     .person-header.alex { background: linear-gradient(135deg, rgba(79,195,247,.22), rgba(79,195,247,.04)); border-bottom: 1px solid rgba(79,195,247,.2); }
@@ -92,19 +93,19 @@
     .person-col.ket  .person-name { color: var(--ket); }
     .person-sub { font-size: .7rem; color: var(--text-dim); font-weight: 600; }
     .task-list { flex: 1; padding: 6px 0; }
-    .task-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; cursor: pointer; transition: background .15s; border-bottom: 1px solid rgba(255,255,255,.04); user-select: none; }
+    .task-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; transition: background .15s; border-bottom: 1px solid rgba(255,255,255,.04); user-select: none; }
     .task-item:last-child { border-bottom: none; }
     .task-item:hover { background: var(--surface2); }
     .task-item.completed { opacity: .42; }
     .task-item.completed .task-title { text-decoration: line-through; }
-    .task-check { width: 26px; height: 26px; border-radius: 7px; border: 2px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: .85rem; transition: all .18s; }
+    .task-check { width: 32px; height: 32px; border-radius: 8px; border: 2px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: .95rem; transition: all .18s; }
     .person-col.alex .task-check         { border-color: var(--alex); color: white; }
     .person-col.alex .task-check.checked { background: var(--alex); border-color: var(--alex); }
     .person-col.ket  .task-check         { border-color: var(--ket); color: white; }
     .person-col.ket  .task-check.checked { background: var(--ket);  border-color: var(--ket); }
     .task-info { flex: 1; min-width: 0; }
-    .task-title { font-size: .88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .task-pts   { font-size: .68rem; color: var(--text-dim); font-weight: 600; }
+    .task-title { font-size: .95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .task-pts   { font-size: .72rem; color: var(--text-dim); font-weight: 600; }
     .person-footer { padding: 14px 16px; border-top: 1px solid var(--border); text-align: center; }
     .score-display { font-size: 2.1rem; font-weight: 900; line-height: 1; }
     .person-col.alex .score-display { color: var(--alex); }
@@ -149,42 +150,56 @@
     /* ===== WINNER / ROULETTE SECTION ===== */
     .winner-section {
       margin-top: 18px;
-      background: linear-gradient(135deg, rgba(255,215,0,.08), rgba(255,215,0,.03));
-      border: 1px solid rgba(255,215,0,.22);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--r);
       padding: 20px;
       text-align: center;
     }
-    .winner-section .ws-label { font-size: .72rem; color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
-    .winner-section .ws-name  { font-size: 1.25rem; font-weight: 900; margin: 6px 0 4px; }
-    .winner-section .ws-pts   { font-size: .82rem; color: var(--text-dim); font-weight: 700; }
+    .winner-section .ws-label {
+      font-size: .7rem; color: var(--text-dim); font-weight: 800;
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px;
+    }
+    .ws-status {
+      font-size: .92rem; font-weight: 800; margin-bottom: 14px; min-height: 1.4em;
+    }
+    .ws-status.neutral { color: var(--text-dim); }
+    .ws-status.winner  { color: inherit; }
+    .ws-spin-area { margin-bottom: 12px; }
+    /* Active spin button */
     .spin-btn {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 13px 28px; border: none; border-radius: 50px;
       background: linear-gradient(135deg, var(--gold), #ff8f00);
       color: #07071a; font-family: inherit; font-size: .95rem; font-weight: 900;
-      cursor: pointer; margin-top: 14px; transition: all .2s;
+      cursor: pointer; transition: all .2s;
       box-shadow: 0 4px 20px rgba(255,215,0,.3);
     }
     .spin-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(255,215,0,.45); }
-    .spin-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-    .already-spun-section {
-      margin-top: 18px;
-      background: rgba(105,240,174,.06);
-      border: 1px solid rgba(105,240,174,.2);
-      border-radius: var(--r);
-      padding: 16px;
-      text-align: center;
+    /* Locked state */
+    .spin-btn--locked {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border: 1px solid var(--border); border-radius: 50px;
+      background: var(--surface2); color: var(--text-dim);
+      font-family: inherit; font-size: .92rem; font-weight: 800;
+      cursor: not-allowed; opacity: .7;
     }
-    .tie-section {
-      margin-top: 18px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 14px;
-      text-align: center;
-      color: var(--text-dim);
-      font-size: .88rem;
+    .spin-lock-reason {
+      margin-top: 7px; font-size: .75rem; color: var(--text-dim); font-weight: 700;
+    }
+    /* Already done state */
+    .spin-btn--done {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; border: 1px solid rgba(105,240,174,.3); border-radius: 50px;
+      background: rgba(105,240,174,.08); color: var(--green);
+      font-family: inherit; font-size: .88rem; font-weight: 800;
+      cursor: default;
+    }
+    .spin-already-result {
+      display: flex; align-items: center; gap: 10px; justify-content: center;
+      margin-top: 10px; padding: 10px 14px;
+      background: rgba(255,215,0,.06); border: 1px solid rgba(255,215,0,.15);
+      border-radius: var(--r-sm);
     }
 
     /* ===== RANKING ===== */
@@ -369,6 +384,74 @@
     .add-task-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px; border: 1px dashed rgba(255,255,255,.18); border-radius: var(--r-sm); background: transparent; color: var(--text-dim); font-family: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; transition: all .2s; margin-bottom: 12px; }
     .add-task-btn:hover { border-color: rgba(255,255,255,.35); color: var(--text); background: var(--surface); }
 
+    /* ===== SHOP ===== */
+    .shop-balances { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .shop-balance-card {
+      border-radius: var(--r); padding: 14px 16px; text-align: center;
+      border: 1px solid var(--border);
+    }
+    .shop-balance-card.alex { background: rgba(79,195,247,.08); border-color: rgba(79,195,247,.2); }
+    .shop-balance-card.ket  { background: rgba(244,143,177,.08); border-color: rgba(244,143,177,.2); }
+    .sbc-name  { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .shop-balance-card.alex .sbc-name { color: var(--alex); }
+    .shop-balance-card.ket  .sbc-name { color: var(--ket); }
+    .sbc-balance { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+    .shop-balance-card.alex .sbc-balance { color: var(--alex); }
+    .shop-balance-card.ket  .sbc-balance { color: var(--ket); }
+    .sbc-sub { font-size: .65rem; color: var(--text-dim); font-weight: 700; margin-top: 3px; }
+
+    .shop-section-hdr {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    }
+    .shop-section-hdr h3 { font-size: .82rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: .05em; }
+    .shop-manage-btn {
+      font-size: .75rem; font-weight: 700; padding: 5px 12px;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 20px;
+      color: var(--text-dim); cursor: pointer; transition: all .2s;
+    }
+    .shop-manage-btn:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
+
+    .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .shop-item-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 16px 14px; display: flex; flex-direction: column; gap: 6px;
+      transition: border-color .2s;
+    }
+    .shop-item-card:hover { border-color: rgba(255,255,255,.18); }
+    .shop-item-card.special-card { border-color: rgba(255,215,0,.2); background: rgba(255,215,0,.03); }
+    .sic-emoji { font-size: 2rem; line-height: 1; }
+    .sic-name  { font-size: .88rem; font-weight: 800; }
+    .sic-desc  { font-size: .7rem; color: var(--text-dim); line-height: 1.4; flex: 1; }
+    .sic-price { font-size: .92rem; font-weight: 900; color: var(--gold); margin-top: 4px; }
+    .sic-special-badge {
+      font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+      background: rgba(255,215,0,.12); color: var(--gold); border-radius: 20px; padding: 2px 7px;
+      display: inline-block; margin-bottom: 2px;
+    }
+    .sic-buy-row { display: flex; gap: 6px; margin-top: 6px; }
+    .sic-buy-btn {
+      flex: 1; padding: 8px 4px; border: none; border-radius: 8px;
+      font-family: inherit; font-size: .72rem; font-weight: 800; cursor: pointer; transition: all .2s;
+    }
+    .sic-buy-btn.alex { background: rgba(79,195,247,.18); color: var(--alex); }
+    .sic-buy-btn.alex:hover:not(:disabled) { background: rgba(79,195,247,.3); }
+    .sic-buy-btn.ket  { background: rgba(244,143,177,.18); color: var(--ket); }
+    .sic-buy-btn.ket:hover:not(:disabled)  { background: rgba(244,143,177,.3); }
+    .sic-buy-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .shop-history { margin-top: 24px; }
+    .shop-history-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .shop-history-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm);
+      padding: 9px 12px; font-size: .82rem;
+    }
+    .shi-emoji { font-size: 1.2rem; flex-shrink: 0; }
+    .shi-info  { flex: 1; }
+    .shi-name  { font-weight: 700; }
+    .shi-meta  { font-size: .68rem; color: var(--text-dim); margin-top: 1px; }
+    .shi-price { font-weight: 800; font-size: .82rem; color: var(--red); white-space: nowrap; }
+
     /* ===== PRIZE CONFIG ===== */
     .prize-config-link {
       background: transparent; border: none; color: var(--text-dim);
@@ -415,7 +498,10 @@
       <h1>🚀 Rotina Foguete</h1>
       <div class="header-date" id="headerDate"></div>
     </div>
-    <button class="manage-btn" id="btnManage">⚙️ Tarefas</button>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+      <button class="manage-btn" id="btnManage">⚙️ Tarefas</button>
+      <span id="syncBadge" style="font-size:.6rem;font-weight:800;padding:3px 9px;border-radius:20px;cursor:default;transition:all .3s;">⏳ Conectando…</span>
+    </div>
   </div>
 </header>
 
@@ -424,6 +510,7 @@
   <button class="tab-btn" data-tab="semana">📊 Semana</button>
   <button class="tab-btn" data-tab="mes">📆 Mês</button>
   <button class="tab-btn" data-tab="ranking">🏆 Ranking</button>
+  <button class="tab-btn" data-tab="loja">🛒 Loja</button>
 </nav>
 
 <main class="content" id="mainContent"></main>
@@ -482,6 +569,58 @@
       </div>
       <div class="form-actions" id="taskFormActions">
         <button class="btn-primary" id="btnSaveTask">Salvar Tarefa</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Shop Manage Modal -->
+<div class="modal-overlay layer2" id="modalShopManage" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🛒 Gerenciar Loja</span>
+      <button class="modal-close" id="btnCloseShopManage">✕</button>
+    </div>
+    <div class="modal-body" id="shopManageBody"></div>
+  </div>
+</div>
+
+<!-- Shop Item Edit Modal -->
+<div class="modal-overlay layer3" id="modalShopItem" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="shopItemModalTitle">➕ Novo Item</span>
+      <button class="modal-close" id="btnCloseShopItem">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Emoji</label>
+          <input class="form-input" id="si_emoji" type="text" maxlength="4" placeholder="🎁" style="text-align:center;font-size:1.3rem;padding:8px;"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preço (⚡ fótons)</label>
+          <input class="form-input" id="si_price" type="number" min="1" max="99999" placeholder="100"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nome</label>
+        <input class="form-input" id="si_name" type="text" maxlength="40" placeholder="Nome do item"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input class="form-input" id="si_desc" type="text" maxlength="80" placeholder="O que é este item..."/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo especial</label>
+        <div class="toggle-group" id="siSpecialGroup">
+          <button class="toggle-btn active" data-val="">Nenhum</button>
+          <button class="toggle-btn" data-val="extra_spin_weekly">🎡 +Giro Semanal</button>
+          <button class="toggle-btn" data-val="extra_spin_monthly">🎰 +Giro Mensal</button>
+        </div>
+      </div>
+      <div class="form-actions" id="shopItemFormActions">
+        <button class="btn-primary" id="btnSaveShopItem">Salvar Item</button>
       </div>
     </div>
   </div>
@@ -562,6 +701,23 @@ const MONTHLY_PRIZES = [
     desc:'Planejar juntos uma saída especial ou mini-viagem a dois' },
 ];
 
+const CURRENCY = { name: 'fótons', symbol: '⚡', singular: 'fóton' };
+
+const DEFAULT_SHOP_ITEMS = [
+  { id:'si_bombom',   emoji:'🍫', name:'Bombom',           price:50,   desc:'Uma sobremesa doce e deliciosa para qualquer hora',       special:null, enabled:true },
+  { id:'si_sorvete',  emoji:'🍦', name:'Sorvete',          price:60,   desc:'O sabor favorito do vencedor, sem discussão',             special:null, enabled:true },
+  { id:'si_cafe',     emoji:'☕', name:'Café Gourmet',     price:80,   desc:'Café preparado do jeito que você mais gosta',             special:null, enabled:true },
+  { id:'si_filme',    emoji:'🎬', name:'Escolher o Filme', price:100,  desc:'Você decide o que assistir hoje — sem reclamação',        special:null, enabled:true },
+  { id:'si_pizza',    emoji:'🍕', name:'Pizza da Noite',price:150, desc:'Pizza no sabor que você quiser para o jantar',            special:null, enabled:true },
+  { id:'si_vinho',    emoji:'🍷', name:'Taça de Vinho',    price:200,  desc:'Uma taça especial para relaxar juntos',                   special:null, enabled:true },
+  { id:'si_game',     emoji:'🎮', name:'2h de Jogo Livre', price:180,  desc:'Duas horas jogando sem ser interrompido',                 special:null, enabled:true },
+  { id:'si_massagem', emoji:'💆', name:'Massagem 10min',   price:220,  desc:'Massagem relaxante de 10 minutos do parceiro',            special:null, enabled:true },
+  { id:'si_cama',     emoji:'🛌', name:'Manhã na Cama',    price:400,  desc:'Café na cama + hora livre antes de levantar',             special:null, enabled:true },
+  { id:'si_passeio',  emoji:'🏖️', name:'Passeio Surpresa', price:600,  desc:'Você escolhe o programa — o outro apenas se prepara',    special:null, enabled:true },
+  { id:'si_xsemanal', emoji:'🎡', name:'+1 Giro Semanal',  price:800,  desc:'Ganha um giro extra na roleta da semana atual',          special:'extra_spin_weekly',  enabled:true },
+  { id:'si_xmensal',  emoji:'🎰', name:'+1 Giro Mensal',   price:2000, desc:'Ganha um giro extra na roleta do mês atual',             special:'extra_spin_monthly', enabled:true },
+];
+
 // ======================== STATE ========================
 function uid() { return Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
 
@@ -582,28 +738,132 @@ function defaultState() {
     prizes: {
       weekly:  WEEKLY_PRIZES.map(p=>({...p,enabled:true})),
       monthly: MONTHLY_PRIZES.map(p=>({...p,enabled:true}))
-    }
+    },
+    shopItems: DEFAULT_SHOP_ITEMS.map(i=>({...i})),
+    purchases: [],
+    extraSpins: []
   };
 }
 
 let state;
-function loadState() {
+
+function _migrateState() {
+  if (!state.adjustments) state.adjustments = [];
+  if (!state.spins)       state.spins = [];
+  if (!state.vales)       state.vales = [];
+  if (!state.prizes)      state.prizes = {};
+  if (!state.prizes.weekly)  state.prizes.weekly  = WEEKLY_PRIZES.map(p=>({...p,enabled:true}));
+  if (!state.prizes.monthly) state.prizes.monthly = MONTHLY_PRIZES.map(p=>({...p,enabled:true}));
+  if (!state.shopItems)  state.shopItems  = DEFAULT_SHOP_ITEMS.map(i=>({...i}));
+  if (!state.purchases)  state.purchases  = [];
+  if (!state.extraSpins) state.extraSpins = [];
+}
+
+// Timeout compatível com Android antigo (sem AbortSignal.timeout)
+function _fetchT(url, opts, ms) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(t));
+}
+
+function _setSyncBadge(status) {
+  const el = document.getElementById('syncBadge');
+  if (!el) return;
+  if (status === 'checking') {
+    el.textContent = '⏳ Conectando…';
+    el.style.background = 'rgba(255,255,255,.08)';
+    el.style.color = 'var(--text-dim)';
+  } else if (status === 'ok') {
+    el.textContent = '☁️ Sync ativo';
+    el.style.background = 'rgba(105,240,174,.15)';
+    el.style.color = '#69f0ae';
+  } else {
+    el.textContent = '⚠️ Sem servidor';
+    el.style.background = 'rgba(239,83,80,.15)';
+    el.style.color = '#ef5350';
+  }
+}
+
+async function loadState() {
+  _setSyncBadge('checking');
+  // 1. Verifica se o servidor Node está rodando (ping específico)
+  let nodeRunning = false;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      state = JSON.parse(raw);
-      if (!state.adjustments) state.adjustments = [];
-      if (!state.spins)       state.spins = [];
-      if (!state.vales)       state.vales = [];
-      if (!state.prizes)      state.prizes = {};
-      if (!state.prizes.weekly)  state.prizes.weekly  = WEEKLY_PRIZES.map(p=>({...p,enabled:true}));
-      if (!state.prizes.monthly) state.prizes.monthly = MONTHLY_PRIZES.map(p=>({...p,enabled:true}));
-      return;
+    const ping = await _fetchT('/api/ping', {}, 3000);
+    if (ping.ok) {
+      const p = await ping.json();
+      nodeRunning = p && p.rotina === true;
     }
   } catch(e) {}
-  state = defaultState();
+
+  if (!nodeRunning) {
+    _setSyncBadge('error');
+    state = { tasks:[], completions:[], adjustments:[], spins:[], vales:[],
+      prizes:{ weekly:WEEKLY_PRIZES.map(p=>({...p,enabled:true})), monthly:MONTHLY_PRIZES.map(p=>({...p,enabled:true})) },
+      shopItems:DEFAULT_SHOP_ITEMS.map(i=>({...i})), purchases:[], extraSpins:[] };
+    _showServerError();
+    return;
+  }
+
+  // 2. Carrega o state do servidor
+  try {
+    const res = await _fetchT('/api/state', {}, 5000);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.tasks) {
+        state = data;
+        _migrateState();
+        _setSyncBadge('ok');
+        return;
+      }
+    }
+    // 404 = primeiro uso, cria estado inicial
+    if (res.status === 404) {
+      state = defaultState();
+      _setSyncBadge('ok');
+      await _persistToServer();
+      return;
+    }
+  } catch(e) {
+    console.error('Erro ao carregar state:', e.message);
+  }
+  _setSyncBadge('error');
+  _showServerError();
 }
-function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function _showServerError() {
+  const el = document.getElementById('mainContent');
+  if (el) el.innerHTML = `
+    <div style="text-align:center;padding:40px 20px;color:var(--text-dim)">
+      <div style="font-size:3rem;margin-bottom:16px">⚠️</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:8px">Servidor não encontrado</div>
+      <div style="font-size:.85rem;line-height:1.6;margin-bottom:20px">
+        Acesse pelo endereço do notebook com o servidor Node rodando.<br>
+        <code style="background:rgba(255,255,255,.08);padding:4px 8px;border-radius:6px;font-size:.8rem">node server.js</code>
+      </div>
+      <button onclick="location.reload()" style="padding:10px 24px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;">🔄 Tentar novamente</button>
+    </div>`;
+}
+
+async function _persistToServer() {
+  try {
+    await _fetchT('/api/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state)
+    }, 5000);
+    _setSyncBadge('ok');
+  } catch(e) {
+    _setSyncBadge('error');
+  }
+}
+
+let _saveTimer;
+function saveState() {
+  // Salva direto no servidor — única fonte de verdade
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(_persistToServer, 300);
+}
 function getActivePrizes(type) { return (state.prizes[type]||[]).filter(p=>p.enabled!==false); }
 
 // ======================== DATE UTILS ========================
@@ -614,11 +874,10 @@ function todayStr(){ return toStr(new Date()); }
 
 function getWeekDays(refStr) {
   const ref = fromStr(refStr);
-  const dow = ref.getDay();
-  const diff = dow === 0 ? -6 : 1 - dow;
-  const mon = new Date(ref);
-  mon.setDate(ref.getDate() + diff);
-  return Array.from({length:7}, (_,i) => { const d=new Date(mon); d.setDate(mon.getDate()+i); return toStr(d); });
+  const dow = ref.getDay(); // 0=Dom, 1=Seg, ..., 6=Sáb
+  const sun = new Date(ref);
+  sun.setDate(ref.getDate() - dow); // retrocede até o Domingo
+  return Array.from({length:7}, (_,i) => { const d=new Date(sun); d.setDate(sun.getDate()+i); return toStr(d); });
 }
 
 function getMonthDays(year, month) {
@@ -678,6 +937,32 @@ function ptsTotal(assignee) {
 }
 
 function tasksDone(assignee)  { return state.completions.filter(c=>c.assignee===assignee).length; }
+
+function coinsEarned(assignee)  { return state.completions.filter(c=>c.assignee===assignee).reduce((s,c)=>s+(c.points||0),0); }
+function coinsSpent(assignee)   { return (state.purchases||[]).filter(p=>p.assignee===assignee).reduce((s,p)=>s+(p.price||0),0); }
+function coinsBalance(assignee) { return Math.max(0, coinsEarned(assignee) - coinsSpent(assignee)); }
+
+function hasExtraSpinToken(type) { return (state.extraSpins||[]).some(t=>t.type==='extra_spin_'+type&&!t.used); }
+function consumeExtraSpinToken(type) {
+  const t = (state.extraSpins||[]).find(t=>t.type==='extra_spin_'+type&&!t.used);
+  if(t) t.used = true;
+}
+
+function buyShopItem(itemId, assignee) {
+  const item = (state.shopItems||[]).find(i=>i.id===itemId);
+  if(!item) return;
+  const bal = coinsBalance(assignee);
+  if(bal < item.price) { alert('Fótons insuficientes!'); return; }
+  state.purchases.push({ id:uid(), itemId, assignee, emoji:item.emoji, name:item.name, price:item.price, special:item.special||null, at:Date.now() });
+  if(item.special==='extra_spin_weekly')  state.extraSpins.push({ id:uid(), type:'extra_spin_weekly',  assignee, used:false, at:Date.now() });
+  if(item.special==='extra_spin_monthly') state.extraSpins.push({ id:uid(), type:'extra_spin_monthly', assignee, used:false, at:Date.now() });
+  saveState(); renderTab();
+  const pop=document.createElement('div');
+  pop.className='point-popup';
+  pop.style.cssText=`left:50%;top:80px;transform:translateX(-50%);color:var(--gold);text-shadow:0 0 12px rgba(255,215,0,.5);font-size:1.05rem;white-space:nowrap;`;
+  pop.textContent=`${item.emoji} Comprado! -${item.price}⚡`;
+  document.body.appendChild(pop); setTimeout(()=>pop.remove(),1400);
+}
 function daysWon(assignee,dates) {
   return dates.filter(d=>{
     const a=ptsForDate('alex',d), k=ptsForDate('ketellyn',d);
@@ -739,11 +1024,11 @@ function breakVale(valeId) {
 }
 
 // ======================== ROULETTE MODAL ========================
-let roulKey=null, roulType=null, roulWinner=null, roulPrizes=null;
+let roulKey=null, roulType=null, roulWinner=null, roulPrizes=null, roulIsExtra=false;
 let wheelRot=0, wheelDone=false;
 
-function openRouletteModal(type, key, winner, prizes) {
-  roulKey=key; roulType=type; roulWinner=winner; roulPrizes=prizes;
+function openRouletteModal(type, key, winner, prizes, isExtra=false) {
+  roulKey=key; roulType=type; roulWinner=winner; roulPrizes=prizes; roulIsExtra=isExtra;
   wheelRot=0; wheelDone=false;
 
   const wName = winner==='alex'?'Alex':'Kétellyn';
@@ -803,7 +1088,11 @@ function doSpin() {
   if(wheelDone) return;
   const prizes=roulPrizes, n=prizes.length, arc=360/n;
   const resultIdx=Math.floor(Math.random()*n);
-  const prizeCenter=resultIdx*arc+arc/2;
+  // A roda gira no sentido horário (CSS rotate+).
+  // O segmento i está centrado em (i*arc + arc/2)° a partir do topo.
+  // Para o ponteiro (topo) apontar para o segmento i após rotação R:
+  //   (360 - R) % 360 = i*arc + arc/2  →  R = (360 - i*arc - arc/2) % 360
+  const prizeCenter=(360 - resultIdx*arc - arc/2 + 360) % 360;
   const jitter=(Math.random()-0.5)*arc*0.5;
   const target=prizeCenter+jitter;
   const currentMod=wheelRot%360;
@@ -841,14 +1130,16 @@ function showSpinResult(prize) {
 
 function recordSpin(prize) {
   const spinId=uid();
-  state.spins.push({ id:spinId, key:roulKey, type:roulType, winner:roulWinner, prize, date:todayStr() });
+  state.spins.push({ id:spinId, key:roulKey, type:roulType, winner:roulWinner, prize, date:todayStr(), isExtra:roulIsExtra });
   state.vales.push({ id:uid(), spinId, key:roulKey, type:roulType, winner:roulWinner, prize, status:'active', createdAt:Date.now() });
+  if(roulIsExtra) consumeExtraSpinToken(roulType);
   saveState();
 }
 
 // ======================== RENDERING ========================
 let currentTab='dia';
 let monthRef={ year:new Date().getFullYear(), month:new Date().getMonth()+1 };
+let weekRef=todayStr(); // ISO date string of any day in the current week (Monday used as anchor)
 
 function renderApp() {
   const now=new Date();
@@ -862,6 +1153,7 @@ function renderTab() {
   else if(currentTab==='semana')  el.innerHTML=buildWeekTab();
   else if(currentTab==='mes')     el.innerHTML=buildMonthTab();
   else if(currentTab==='ranking') el.innerHTML=buildRankingTab();
+  else if(currentTab==='loja')    el.innerHTML=buildShopTab();
   bindTabEvents();
 }
 
@@ -910,9 +1202,20 @@ function buildPersonCol(assignee,name,emoji,dateStr) {
 }
 
 // ---- WEEK ----
+function shiftWeek(delta) {
+  const days = getWeekDays(weekRef);
+  const anchor = fromStr(days[0]);
+  anchor.setDate(anchor.getDate() + delta * 7);
+  weekRef = toStr(anchor);
+  renderTab();
+}
+
 function buildWeekTab() {
-  const today=todayStr(), days=getWeekDays(today);
+  const today=todayStr(), days=getWeekDays(weekRef);
   const d0=fromStr(days[0]), d6=fromStr(days[6]);
+  const isCurrentWeek = days.includes(today);
+  const weekLabel = isCurrentWeek ? 'Semana atual' : `Semana de ${d0.getDate()}/${d0.getMonth()+1}`;
+
   const rows=days.map(ds=>{
     const d=fromStr(ds), isToday=ds===today, future=ds>today;
     const a=ptsForDate('alex',ds), k=ptsForDate('ketellyn',ds);
@@ -927,12 +1230,16 @@ function buildWeekTab() {
   const past=days.filter(d=>d<=today);
   const wa=past.reduce((s,d)=>s+ptsForDate('alex',d),0);
   const wk=past.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
-  const weekKey=getWeekKey(today);
+  const weekKey=getWeekKey(weekRef);
 
   return `
-    <div class="period-section-title">
-      <h2>Semana atual</h2>
-      <span>${d0.getDate()}/${d0.getMonth()+1} – ${d6.getDate()}/${d6.getMonth()+1}</span>
+    <div class="month-nav">
+      <button class="month-nav-btn" id="btnPrevWeek">◀</button>
+      <span class="month-title">${weekLabel}</span>
+      <button class="month-nav-btn" id="btnNextWeek" ${isCurrentWeek?'disabled style="opacity:.35;cursor:default"':''}>▶</button>
+    </div>
+    <div style="font-size:.75rem;color:var(--text-dim);text-align:center;margin:-6px 0 10px;">
+      ${d0.getDate()}/${d0.getMonth()+1} – ${d6.getDate()}/${d6.getMonth()+1}
     </div>
     <div class="period-summary">
       <div class="period-header">
@@ -991,41 +1298,87 @@ function buildMonthTab() {
 
 // ---- WINNER SECTION ----
 function buildWinnerSection(type, key, alexPts, ketPts) {
-  if(alexPts===0&&ketPts===0) return '';
-  const winner=getPeriodWinner(alexPts,ketPts);
-  const prizes=getActivePrizes(type);
-  const label=type==='weekly'?'da Semana':'do Mês';
-  const icon=type==='weekly'?'🎡':'🎰';
+  const label   = type==='weekly' ? 'da Semana' : 'do Mês';
+  const icon    = type==='weekly' ? '🎡' : '🎰';
+  const winner  = getPeriodWinner(alexPts, ketPts);
+  const spin    = getSpinForKey(key);
 
-  if(!winner) {
-    return `<div class="tie-section">🤝 Empate! Nenhuma roleta disponível quando há empate.</div>`;
+  // --- Status line (who's leading) ---
+  let statusHtml;
+  if (alexPts===0 && ketPts===0) {
+    statusHtml = `<div class="ws-status neutral">Sem pontos ainda este período</div>`;
+  } else if (!winner) {
+    statusHtml = `<div class="ws-status neutral">🤝 Empate — ${alexPts} pts cada</div>`;
+  } else {
+    const wName  = winner==='alex' ? 'Alex' : 'Kétellyn';
+    const wEmoji = winner==='alex' ? '💙'   : '💗';
+    const wColor = winner==='alex' ? 'var(--alex)' : 'var(--ket)';
+    const lName  = winner==='alex' ? 'Kétellyn' : 'Alex';
+    const diff   = Math.abs(alexPts - ketPts);
+    statusHtml = `<div class="ws-status winner" style="color:${wColor}">${wEmoji} ${wName} lidera por ${diff} pts sobre ${lName}</div>`;
   }
 
-  const spin=getSpinForKey(key);
-  const wName=winner==='alex'?'Alex':'Kétellyn';
-  const wEmoji=winner==='alex'?'💙':'💗';
-  const wColor=winner==='alex'?'var(--alex)':'var(--ket)';
-  const loser=winner==='alex'?'ketellyn':'alex';
-  const lName=loser==='alex'?'Alex':'Kétellyn';
-  const diff=Math.abs(alexPts-ketPts);
+  // --- Extra spin token check ---
+  const hasExtra = hasExtraSpinToken(type);
 
-  if(spin) {
-    return `<div class="already-spun-section">
-      <div style="font-size:.72rem;color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
-        ${icon} Roleta ${label} girada!
-      </div>
-      <div style="font-size:1.4rem;margin-bottom:4px">${spin.prize.emoji}</div>
-      <div style="font-size:.95rem;font-weight:900;color:var(--gold)">${spin.prize.label}</div>
-      <div style="font-size:.75rem;color:var(--text-dim);margin-top:4px">Girado em ${spin.date} · Ver em Ranking → Vales</div>
-    </div>`;
+  // --- Domingo check (semanal) ---
+  // Roleta semanal só abre no Domingo, depois que a semana (Dom–Sáb) terminou
+  const _today = todayStr();
+  const _isSunday = new Date().getDay() === 0;
+  let _weeklyUnlocked = true;
+  let _weeklyLockReason = '';
+  if (type === 'weekly') {
+    const _wDays = getWeekDays(key.replace('week_',''));
+    const _weekEnded = _wDays[6] < _today; // Sábado já passou?
+    if (!_isSunday) {
+      _weeklyUnlocked = false;
+      _weeklyLockReason = '📅 Disponível toda Domingo';
+    } else if (!_weekEnded) {
+      _weeklyUnlocked = false;
+      _weeklyLockReason = '⏳ Semana ainda não terminou (aguarde o Sábado)';
+    }
+  }
+
+  // --- Spin button state ---
+  let spinBtnHtml;
+  if (spin) {
+    // Already spun: show locked button + prize info
+    const extraOk = winner && hasExtra && _weeklyUnlocked;
+    const extraBtn = extraOk ? `
+      <button class="spin-btn" id="btnSpinNow" style="margin-top:8px;background:linear-gradient(135deg,#f57f17,#bf360c)">🎡 Usar Giro Extra!</button>
+      <div style="font-size:.7rem;color:var(--gold);text-align:center;margin-top:4px">1 giro extra disponível</div>`
+    : (winner && hasExtra && !_weeklyUnlocked) ? `
+      <button class="spin-btn spin-btn--locked" disabled style="margin-top:8px">🔒 Giro Extra · ${_weeklyLockReason}</button>` : '';
+    spinBtnHtml = `
+      <button class="spin-btn spin-btn--done" disabled>✓ Roleta ${label} já girada</button>
+      <div class="spin-already-result">
+        <span style="font-size:1.3rem">${spin.prize.emoji}</span>
+        <div>
+          <div style="font-weight:900;font-size:.9rem;color:var(--gold)">${spin.prize.label}</div>
+          <div style="font-size:.7rem;color:var(--text-dim)">Girado em ${spin.date} · ver em Ranking → Vales</div>
+        </div>
+      </div>${extraBtn}`;
+  } else if (!winner) {
+    // Tie or no points: locked
+    const reason = alexPts===0&&ketPts===0 ? 'Complete tarefas para desbloquear' : 'Empate — precisa de um vencedor';
+    spinBtnHtml = `
+      <button class="spin-btn spin-btn--locked" disabled>🔒 Girar Roleta ${label}</button>
+      <div class="spin-lock-reason">${reason}</div>`;
+  } else if (!_weeklyUnlocked) {
+    // Weekly but not Sunday / week not ended
+    spinBtnHtml = `
+      <button class="spin-btn spin-btn--locked" disabled>${icon} Girar Roleta ${label}</button>
+      <div class="spin-lock-reason">${_weeklyLockReason}</div>`;
+  } else {
+    // Has winner, unlocked: active
+    spinBtnHtml = `<button class="spin-btn" id="btnSpinNow">${icon} Girar Roleta ${label}</button>`;
   }
 
   return `<div class="winner-section">
-    <div class="ws-label">🏆 Vencedor ${label}</div>
-    <div class="ws-name" style="color:${wColor}">${wEmoji} ${wName}!</div>
-    <div class="ws-pts">Vantagem de ${diff} pontos sobre ${lName}</div>
-    <button class="spin-btn" id="btnSpinNow">${icon} Girar Roleta ${label}</button>
-    <div style="margin-top:10px"><button class="prize-config-link" id="btnOpenPrizes">⚙️ Configurar prêmios</button></div>
+    <div class="ws-label">${icon} Roleta ${label}</div>
+    ${statusHtml}
+    <div class="ws-spin-area">${spinBtnHtml}</div>
+    <button class="prize-config-link" id="btnOpenPrizes">⚙️ Configurar prêmios da roleta</button>
   </div>`;
 }
 
@@ -1144,6 +1497,81 @@ function buildValeCard(vale, isActive) {
       ${statusHtml}
     </div>
     ${actions}
+  </div>`;
+}
+
+// ======================== SHOP TAB ========================
+function buildShopTab() {
+  const ab = coinsBalance('alex'), kb = coinsBalance('ketellyn');
+  const items = (state.shopItems||[]).filter(i=>i.enabled!==false);
+
+  const grid = items.length
+    ? items.map(item=>buildShopItemCard(item,ab,kb)).join('')
+    : `<div class="empty-state" style="padding:20px;grid-column:1/-1">Nenhum item disponível.</div>`;
+
+  const allPurchases = [...(state.purchases||[])].reverse();
+  const histHtml = allPurchases.length===0
+    ? `<div class="empty-state" style="padding:16px">Nenhuma compra ainda — gaste seus fótons!</div>`
+    : allPurchases.slice(0,15).map(p=>{
+        const who=p.assignee==='alex'?'💙 Alex':'💗 Kétellyn';
+        const date=new Date(p.at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+        return `<div class="shop-history-item">
+          <div class="shi-emoji">${p.emoji}</div>
+          <div class="shi-info">
+            <div class="shi-name">${esc(p.name)}</div>
+            <div class="shi-meta">${who} · ${date}</div>
+          </div>
+          <div class="shi-price">-${p.price}⚡</div>
+        </div>`;
+      }).join('');
+
+  return `
+    <div class="shop-balances">
+      <div class="shop-balance-card alex">
+        <div class="sbc-name">💙 Alex</div>
+        <div class="sbc-balance">${ab}<span style="font-size:.9rem;opacity:.7">⚡</span></div>
+        <div class="sbc-sub">${coinsEarned('alex')} ganhos · ${coinsSpent('alex')} gastos</div>
+      </div>
+      <div class="shop-balance-card ket">
+        <div class="sbc-name">💗 Kétellyn</div>
+        <div class="sbc-balance">${kb}<span style="font-size:.9rem;opacity:.7">⚡</span></div>
+        <div class="sbc-sub">${coinsEarned('ketellyn')} ganhos · ${coinsSpent('ketellyn')} gastos</div>
+      </div>
+    </div>
+    <div class="shop-section-hdr">
+      <h3>🛒 Itens da Loja</h3>
+      <button class="shop-manage-btn" id="btnShopManage">⚙️ Gerenciar</button>
+    </div>
+    <div class="shop-grid">${grid}</div>
+    <div class="shop-history">
+      <div class="shop-section-hdr" style="margin-top:20px">
+        <h3>📋 Histórico de Compras</h3>
+      </div>
+      <div class="shop-history-list">${histHtml}</div>
+    </div>`;
+}
+
+function buildShopItemCard(item, alexBal, ketBal) {
+  const isSpecial = !!item.special;
+  const alexCan = alexBal >= item.price;
+  const ketCan  = ketBal  >= item.price;
+  const specialBadge = isSpecial
+    ? `<div class="sic-special-badge">${item.special==='extra_spin_weekly'?'🎡 +Giro Semanal':'🎰 +Giro Mensal'}</div>`
+    : '';
+  return `<div class="shop-item-card ${isSpecial?'special-card':''}">
+    ${specialBadge}
+    <div class="sic-emoji">${item.emoji}</div>
+    <div class="sic-name">${esc(item.name)}</div>
+    <div class="sic-desc">${esc(item.desc)}</div>
+    <div class="sic-price">${item.price} ⚡</div>
+    <div class="sic-buy-row">
+      <button class="sic-buy-btn alex" data-item="${item.id}" data-who="alex" ${!alexCan?'disabled':''} title="${alexCan?'Comprar':'Fótons insuficientes'}">
+        💙 ${alexCan?'Comprar':'Sem ⚡'}
+      </button>
+      <button class="sic-buy-btn ket" data-item="${item.id}" data-who="ketellyn" ${!ketCan?'disabled':''} title="${ketCan?'Comprar':'Fótons insuficientes'}">
+        💗 ${ketCan?'Comprar':'Sem ⚡'}
+      </button>
+    </div>
   </div>`;
 }
 
@@ -1266,20 +1694,122 @@ function resetPrizes(type) {
   saveState(); renderPrizesBody(type);
 }
 
+// ======================== SHOP MANAGE ========================
+let editingShopItemId = null, siSelSpecial = '';
+
+function openShopManageModal() { renderShopManageBody(); document.getElementById('modalShopManage').hidden=false; }
+
+function renderShopManageBody() {
+  const items = state.shopItems || [];
+  const html = items.map(item=>{
+    const dis = item.enabled===false;
+    return `<div class="manage-task-item" style="${dis?'opacity:.45':''}">
+      <div class="manage-task-info">
+        <div class="manage-task-title">${item.emoji} ${esc(item.name)} · ${item.price}⚡</div>
+        <div class="manage-task-meta">
+          ${item.special?`<span class="badge badge-rec">${item.special==='extra_spin_weekly'?'🎡':'🎰'} Especial</span>`:''}
+          <span class="badge ${dis?'badge-ambos':'badge-rec'}">${dis?'Desativado':'Ativo'}</span>
+        </div>
+      </div>
+      <div class="manage-task-btns">
+        <button class="icon-btn btn-si-toggle" data-id="${item.id}" title="${dis?'Ativar':'Desativar'}">${dis?'○':'●'}</button>
+        <button class="icon-btn btn-si-edit" data-id="${item.id}">✏️</button>
+        <button class="icon-btn delete btn-si-del" data-id="${item.id}">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('shopManageBody').innerHTML=`
+    <button class="add-task-btn" id="btnAddShopItem">➕ Novo Item</button>
+    <div class="manage-list">${html||'<div class="empty-state">Sem itens. Adicione um!</div>'}</div>
+    <button class="btn-danger" style="width:100%;margin-top:14px;padding:10px;" id="btnResetShop">↺ Restaurar Padrões</button>`;
+
+  document.getElementById('btnAddShopItem').addEventListener('click',()=>openShopItemModal(null));
+  document.querySelectorAll('.btn-si-toggle').forEach(b=>b.addEventListener('click',()=>toggleShopItem(b.dataset.id)));
+  document.querySelectorAll('.btn-si-edit').forEach(b=>b.addEventListener('click',()=>openShopItemModal(b.dataset.id)));
+  document.querySelectorAll('.btn-si-del').forEach(b=>b.addEventListener('click',()=>deleteShopItem(b.dataset.id)));
+  document.getElementById('btnResetShop').addEventListener('click',resetShopItems);
+}
+
+function toggleShopItem(id) {
+  const item=state.shopItems.find(i=>i.id===id); if(!item) return;
+  item.enabled = item.enabled===false;
+  saveState(); renderShopManageBody(); if(currentTab==='loja') renderTab();
+}
+
+function deleteShopItem(id) {
+  if(!confirm('Remover este item da loja?')) return;
+  state.shopItems=state.shopItems.filter(i=>i.id!==id);
+  saveState(); renderShopManageBody(); if(currentTab==='loja') renderTab();
+}
+
+function resetShopItems() {
+  if(!confirm('Restaurar itens padrão? Itens personalizados serão removidos.')) return;
+  state.shopItems=DEFAULT_SHOP_ITEMS.map(i=>({...i}));
+  saveState(); renderShopManageBody(); if(currentTab==='loja') renderTab();
+}
+
+function openShopItemModal(itemId) {
+  editingShopItemId=itemId;
+  const item=itemId?state.shopItems.find(i=>i.id===itemId):null;
+  document.getElementById('shopItemModalTitle').textContent=item?'✏️ Editar Item':'➕ Novo Item';
+  document.getElementById('si_emoji').value=item?item.emoji:'';
+  document.getElementById('si_name').value =item?item.name :'';
+  document.getElementById('si_price').value=item?item.price:'';
+  document.getElementById('si_desc').value =item?item.desc :'';
+  siSelSpecial=item?(item.special||''):'';
+  syncSiSpecialUI();
+  const actEl=document.getElementById('shopItemFormActions');
+  if(item){
+    actEl.innerHTML=`<button class="btn-danger" id="btnDelShopItemEdit">🗑️ Apagar</button><button class="btn-primary" id="btnSaveShopItem">Salvar</button>`;
+    document.getElementById('btnDelShopItemEdit').addEventListener('click',()=>{
+      if(!confirm('Apagar este item?')) return;
+      state.shopItems=state.shopItems.filter(i=>i.id!==editingShopItemId);
+      saveState(); document.getElementById('modalShopItem').hidden=true; renderShopManageBody(); if(currentTab==='loja') renderTab();
+    });
+  } else {
+    actEl.innerHTML=`<button class="btn-primary" id="btnSaveShopItem">Salvar Item</button>`;
+  }
+  document.getElementById('btnSaveShopItem').addEventListener('click',saveShopItem);
+  document.getElementById('modalShopItem').hidden=false;
+}
+
+function syncSiSpecialUI() {
+  document.querySelectorAll('#siSpecialGroup .toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===siSelSpecial));
+}
+
+function saveShopItem() {
+  const emoji=document.getElementById('si_emoji').value.trim()||'🎁';
+  const name =document.getElementById('si_name').value.trim();
+  const price=Math.max(1,parseInt(document.getElementById('si_price').value)||1);
+  const desc =document.getElementById('si_desc').value.trim();
+  if(!name){document.getElementById('si_name').focus();return;}
+  if(editingShopItemId){
+    const item=state.shopItems.find(i=>i.id===editingShopItemId);
+    if(item){item.emoji=emoji;item.name=name;item.price=price;item.desc=desc;item.special=siSelSpecial||null;}
+  } else {
+    state.shopItems.push({id:uid(),emoji,name,price,desc,special:siSelSpecial||null,enabled:true});
+  }
+  saveState(); document.getElementById('modalShopItem').hidden=true; renderShopManageBody(); if(currentTab==='loja') renderTab();
+}
+
 // ======================== TAB EVENTS ========================
 function bindTabEvents() {
   if(currentTab==='dia') {
     document.querySelectorAll('.task-item').forEach(el=>el.addEventListener('click',onTaskClick));
   }
   if(currentTab==='semana') {
-    document.getElementById('btnSpinNow')?.addEventListener('click',()=>{
-      const key=getWeekKey(todayStr());
-      const days=getWeekDays(todayStr());
+    document.getElementById('btnPrevWeek')?.addEventListener('click',()=>shiftWeek(-1));
+    document.getElementById('btnNextWeek')?.addEventListener('click',()=>shiftWeek(+1));
+    document.getElementById('btnSpinNow')?.addEventListener('click',e=>{
+      const key=getWeekKey(weekRef);
+      const days=getWeekDays(weekRef);
       const past=days.filter(d=>d<=todayStr());
       const wa=past.reduce((s,d)=>s+ptsForDate('alex',d),0);
       const wk=past.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
       const winner=getPeriodWinner(wa,wk);
-      if(winner) openRouletteModal('weekly',key,winner,getActivePrizes('weekly'));
+      const isExtra=hasSpun(key)&&hasExtraSpinToken('weekly');
+      if(winner) openRouletteModal('weekly',key,winner,getActivePrizes('weekly'),isExtra);
     });
     document.getElementById('btnOpenPrizes')?.addEventListener('click',()=>openPrizesModal('weekly'));
   }
@@ -1299,9 +1829,14 @@ function bindTabEvents() {
       const ma=past.reduce((s,d)=>s+ptsForDate('alex',d),0);
       const mk=past.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
       const winner=getPeriodWinner(ma,mk);
-      if(winner) openRouletteModal('monthly',key,winner,getActivePrizes('monthly'));
+      const isExtra=hasSpun(key)&&hasExtraSpinToken('monthly');
+      if(winner) openRouletteModal('monthly',key,winner,getActivePrizes('monthly'),isExtra);
     });
     document.getElementById('btnOpenPrizes')?.addEventListener('click',()=>openPrizesModal('monthly'));
+  }
+  if(currentTab==='loja') {
+    document.getElementById('btnShopManage')?.addEventListener('click',openShopManageModal);
+    document.querySelectorAll('.sic-buy-btn').forEach(b=>b.addEventListener('click',()=>buyShopItem(b.dataset.item,b.dataset.who)));
   }
 }
 
@@ -1454,9 +1989,6 @@ function closeTaskModal(){document.getElementById('modalTask').hidden=true;editI
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // ======================== INIT ========================
-loadState();
-renderApp();
-
 document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
   b.classList.add('active');currentTab=b.dataset.tab;renderTab();
@@ -1475,10 +2007,20 @@ document.getElementById('modalPrizes').addEventListener('click',e=>{if(e.target=
 document.getElementById('btnCloseRoulette').addEventListener('click',()=>{document.getElementById('modalRoulette').hidden=true;});
 document.getElementById('modalRoulette').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalRoulette').hidden=true;});
 
+document.getElementById('btnCloseShopManage').addEventListener('click',()=>{document.getElementById('modalShopManage').hidden=true;});
+document.getElementById('modalShopManage').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalShopManage').hidden=true;});
+
+document.getElementById('btnCloseShopItem').addEventListener('click',()=>{document.getElementById('modalShopItem').hidden=true;});
+document.getElementById('modalShopItem').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalShopItem').hidden=true;});
+
+document.getElementById('siSpecialGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;siSelSpecial=b.dataset.val;syncSiSpecialUI();});
+
 document.getElementById('assigneeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selAssignee=b.dataset.val;syncAssigneeUI();});
 document.getElementById('typeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selType=b.dataset.val;syncTypeUI();});
 
 buildDayToggles();
+try { localStorage.clear(); } catch(e) {} // remove dados locais antigos — servidor é a fonte de verdade
+loadState().then(() => renderApp());
 </script>
 </body>
 </html>
