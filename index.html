@@ -418,6 +418,15 @@
     .add-task-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px; border: 1px dashed rgba(255,255,255,.18); border-radius: var(--r-sm); background: transparent; color: var(--text-dim); font-family: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; transition: all .2s; margin-bottom: 12px; }
     .add-task-btn:hover { border-color: rgba(255,255,255,.35); color: var(--text); background: var(--surface); }
 
+    /* ===== SABOTAGE TASK ===== */
+    .sabotage-task { border-left: 3px solid var(--red) !important; background: rgba(239,83,80,.07) !important; }
+    .sabotage-task .task-check { border-color: rgba(239,83,80,.5); }
+    .sabotage-task.completed .task-check { background: var(--red); border-color: var(--red); }
+    .sabotage-timer { font-size: .68rem; font-weight: 800; color: var(--red); margin-top: 2px; letter-spacing: .02em; }
+    .sabotage-timer.done { color: var(--green); }
+    .sabotage-badge { font-size: .6rem; font-weight: 800; background: rgba(239,83,80,.18); color: var(--red); padding: 1px 6px; border-radius: 20px; vertical-align: middle; margin-left: 4px; }
+    .shield-active-badge { display:inline-block; font-size:.7rem; font-weight:800; background:rgba(105,240,174,.15); color:var(--green); border:1px solid rgba(105,240,174,.3); border-radius:20px; padding:3px 10px; margin-top:6px; }
+
     /* ===== SHOP ===== */
     .shop-balances { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .shop-balance-card {
@@ -655,10 +664,38 @@
           <button class="toggle-btn active" data-val="">Nenhum</button>
           <button class="toggle-btn" data-val="extra_spin_weekly">🎡 +Giro Semanal</button>
           <button class="toggle-btn" data-val="extra_spin_monthly">🎰 +Giro Mensal</button>
+          <button class="toggle-btn" data-val="sabotage">💣 Sabotagem</button>
+          <button class="toggle-btn" data-val="shield">🛡️ Escudo</button>
         </div>
       </div>
       <div class="form-actions" id="shopItemFormActions">
         <button class="btn-primary" id="btnSaveShopItem">Salvar Item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sabotage Modal -->
+<div class="modal-overlay layer2" id="modalSabotage" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">💣 Sabotagem Leve</span>
+      <button class="modal-close" id="btnCloseSabotage">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:16px;line-height:1.5">Crie uma tarefa surpresa para <strong id="sabotageTargetName" style="color:var(--text)"></strong> concluir hoje. Se não concluir até meia-noite, a penalidade é aplicada automaticamente.</p>
+      <div class="form-group">
+        <label class="form-label">Tarefa para o parceiro</label>
+        <input class="form-input" id="sabotageTaskTitle" type="text" maxlength="60" placeholder="ex: Fazer 10 polichinelos"/>
+      </div>
+      <div style="background:rgba(239,83,80,.09);border:1px solid rgba(239,83,80,.25);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:16px">
+        <div style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--red);margin-bottom:4px">Penalidade se não concluir até meia-noite</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--red)">−20 ⚡</div>
+        <div style="font-size:.68rem;color:var(--text-dim);margin-top:2px">Se concluir, nenhum ponto é ganho ou perdido</div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-ghost" id="btnCancelSabotage">Cancelar</button>
+        <button class="btn-primary" id="btnConfirmSabotage" style="background:linear-gradient(135deg,#c62828,#b71c1c)">💣 Sabotar!</button>
       </div>
     </div>
   </div>
@@ -712,7 +749,14 @@ const TASK_CATEGORIES = [
   { id:'outros',      emoji:'✨',  label:'Outros',       color:'#b0bec5' },
 ];
 const CAT_MAP = Object.fromEntries(TASK_CATEGORIES.map(c=>[c.id,c]));
-function getCategory(task) { return CAT_MAP[task.category] || CAT_MAP['outros']; }
+const CAT_PALETTE = ['#f06292','#ba68c8','#7986cb','#4dd0e1','#4db6ac','#aed581','#ffb74d','#ff8a65','#a1887f','#90a4ae'];
+function getAllCategories() {
+  return [...TASK_CATEGORIES, ...(state.customCategories||[])];
+}
+function getCategory(task) {
+  const all = getAllCategories();
+  return all.find(c=>c.id===task.category) || CAT_MAP['outros'];
+}
 
 const WEEKLY_PRIZES = [
   { id:'louça',    emoji:'🍽️', label:'Vale Louça',    shortLabel:'Louça',   color:'#1e88e5',
@@ -755,18 +799,21 @@ const MONTHLY_PRIZES = [
 const CURRENCY = { name: 'fótons', symbol: '⚡', singular: 'fóton' };
 
 const DEFAULT_SHOP_ITEMS = [
-  { id:'si_bombom',   emoji:'🍫', name:'Bombom',           price:50,   desc:'Uma sobremesa doce e deliciosa para qualquer hora',       special:null, enabled:true },
-  { id:'si_sorvete',  emoji:'🍦', name:'Sorvete',          price:60,   desc:'O sabor favorito do vencedor, sem discussão',             special:null, enabled:true },
-  { id:'si_cafe',     emoji:'☕', name:'Café Gourmet',     price:80,   desc:'Café preparado do jeito que você mais gosta',             special:null, enabled:true },
-  { id:'si_filme',    emoji:'🎬', name:'Escolher o Filme', price:100,  desc:'Você decide o que assistir hoje — sem reclamação',        special:null, enabled:true },
-  { id:'si_pizza',    emoji:'🍕', name:'Pizza da Noite',price:150, desc:'Pizza no sabor que você quiser para o jantar',            special:null, enabled:true },
-  { id:'si_vinho',    emoji:'🍷', name:'Taça de Vinho',    price:200,  desc:'Uma taça especial para relaxar juntos',                   special:null, enabled:true },
-  { id:'si_game',     emoji:'🎮', name:'2h de Jogo Livre', price:180,  desc:'Duas horas jogando sem ser interrompido',                 special:null, enabled:true },
-  { id:'si_massagem', emoji:'💆', name:'Massagem 10min',   price:220,  desc:'Massagem relaxante de 10 minutos do parceiro',            special:null, enabled:true },
-  { id:'si_cama',     emoji:'🛌', name:'Manhã na Cama',    price:400,  desc:'Café na cama + hora livre antes de levantar',             special:null, enabled:true },
-  { id:'si_passeio',  emoji:'🏖️', name:'Passeio Surpresa', price:600,  desc:'Você escolhe o programa — o outro apenas se prepara',    special:null, enabled:true },
-  { id:'si_xsemanal', emoji:'🎡', name:'+1 Giro Semanal',  price:800,  desc:'Ganha um giro extra na roleta da semana atual',          special:'extra_spin_weekly',  enabled:true },
-  { id:'si_xmensal',  emoji:'🎰', name:'+1 Giro Mensal',   price:2000, desc:'Ganha um giro extra na roleta do mês atual',             special:'extra_spin_monthly', enabled:true },
+  { id:'si_sabotage',  emoji:'💣', name:'Sabotagem Leve',          price:30,    desc:'Adicionar uma tarefa pro outro (ex: 10 polichinelos)',       special:'sabotage',           enabled:true },
+  { id:'si_bombom',   emoji:'🍫', name:'Bombom',                   price:50,    desc:'Uma sobremesa doce',                                         special:null,                 enabled:true },
+  { id:'si_cafe',     emoji:'☕', name:'Café Gourmet',             price:50,    desc:'Café preparado do jeito que você mais gosta',                special:null,                 enabled:true },
+  { id:'si_shield',   emoji:'🛡️', name:'Escudo Anti-Sabotagem',   price:50,    desc:'Bloqueia uma sabotagem do parceiro',                         special:'shield',             enabled:true },
+  { id:'si_filme',    emoji:'🎬', name:'Escolher o Filme',         price:100,   desc:'Você decide o que assistir hoje',                            special:null,                 enabled:true },
+  { id:'si_game',     emoji:'🎮', name:'2h de Jogo Livre',         price:180,   desc:'Duas horas jogando sem ser interrompido',                    special:null,                 enabled:true },
+  { id:'si_sorvete',  emoji:'🍦', name:'Sorvete/Açaí',            price:200,   desc:'O sabor favorito do vencedor',                               special:null,                 enabled:true },
+  { id:'si_vinho',    emoji:'🍷', name:'Taça de Vinho',            price:200,   desc:'Uma taça especial para relaxar juntos',                      special:null,                 enabled:true },
+  { id:'si_massagem', emoji:'💆', name:'Massagem 10min',           price:220,   desc:'Massagem relaxante de 10 minutos do parceiro',               special:null,                 enabled:true },
+  { id:'si_pizza',    emoji:'🍕', name:'Pizza da Noite',           price:300,   desc:'Pizza no sabor que você quiser para o jantar',               special:null,                 enabled:true },
+  { id:'si_cama',     emoji:'🛌', name:'Manhã na Cama',            price:400,   desc:'Café na cama + hora livre antes de levantar',                special:null,                 enabled:true },
+  { id:'si_dieta',    emoji:'😋', name:'Dia Livre de Dieta',       price:500,   desc:'Comer o que quiser sem o outro comentar',                    special:null,                 enabled:true },
+  { id:'si_passeio',  emoji:'🏖️', name:'Passeio Surpresa',        price:600,   desc:'O outro escolhe o programa, quero um passeio.',              special:null,                 enabled:true },
+  { id:'si_xsemanal', emoji:'🎡', name:'+1 Giro Semanal',          price:5000,  desc:'Ganha um giro extra na roleta da semana atual',              special:'extra_spin_weekly',  enabled:true },
+  { id:'si_xmensal',  emoji:'🎰', name:'+1 Giro Mensal',           price:20000, desc:'Ganha um giro extra na roleta do mês atual',                 special:'extra_spin_monthly', enabled:true },
 ];
 
 // ======================== STATE ========================
@@ -792,7 +839,10 @@ function defaultState() {
     },
     shopItems: DEFAULT_SHOP_ITEMS.map(i=>({...i})),
     purchases: [],
-    extraSpins: []
+    extraSpins: [],
+    customCategories: [],
+    sabotages: [],
+    shields: []
   };
 }
 
@@ -807,9 +857,35 @@ function _migrateState() {
   if (!state.prizes.monthly) state.prizes.monthly = MONTHLY_PRIZES.map(p=>({...p,enabled:true}));
   if (!state.shopItems)  state.shopItems  = DEFAULT_SHOP_ITEMS.map(i=>({...i}));
   if (!state.purchases)  state.purchases  = [];
-  if (!state.extraSpins) state.extraSpins = [];
+  if (!state.extraSpins)       state.extraSpins = [];
+  if (!state.customCategories) state.customCategories = [];
+  if (!state.sabotages) state.sabotages = [];
+  if (!state.shields)   state.shields   = [];
   // Garante categoria em todas as tarefas existentes
   state.tasks.forEach(t => { if (!t.category) t.category = 'outros'; });
+  // Auto-detecta itens de sabotagem/escudo pelo nome (para itens criados antes deste recurso)
+  (state.shopItems||[]).forEach(item => {
+    if (!item.special) {
+      if (/sabotag/i.test(item.name)) item.special = 'sabotage';
+      else if (/escudo/i.test(item.name)) item.special = 'shield';
+    }
+  });
+  // Remove tarefas avulsas comuns cuja data já passou
+  const _today = todayStr();
+  state.tasks = state.tasks.filter(t => !(t.type === 'avulso' && !t.isSabotage && t.date && t.date < _today));
+  // Aplica penalidade de sabotagens passadas não concluídas e remove as tarefas expiradas
+  state.sabotages.forEach(sab => {
+    if (!sab.penaltyApplied && !sab.shieldBlocked && sab.taskId && sab.date < _today) {
+      const completed = state.completions.some(c => c.taskId === sab.taskId && c.assignee === sab.to);
+      if (!completed) {
+        state.adjustments.push({ id: uid(), assignee: sab.to, date: sab.date, points: -20, note: '💣 Sabotagem não concluída' });
+      }
+      sab.penaltyApplied = true;
+    }
+  });
+  // Remove tarefas de sabotagem de dias passados
+  const pastSabTaskIds = new Set(state.sabotages.filter(s => s.date < _today && s.taskId).map(s => s.taskId));
+  state.tasks = state.tasks.filter(t => !pastSabTaskIds.has(t.id));
 }
 
 // Timeout compatível com Android antigo (sem AbortSignal.timeout)
@@ -853,7 +929,7 @@ async function loadState() {
     _setSyncBadge('error');
     state = { tasks:[], completions:[], adjustments:[], spins:[], vales:[],
       prizes:{ weekly:WEEKLY_PRIZES.map(p=>({...p,enabled:true})), monthly:MONTHLY_PRIZES.map(p=>({...p,enabled:true})) },
-      shopItems:DEFAULT_SHOP_ITEMS.map(i=>({...i})), purchases:[], extraSpins:[] };
+      shopItems:DEFAULT_SHOP_ITEMS.map(i=>({...i})), purchases:[], extraSpins:[], customCategories:[], sabotages:[], shields:[] };
     _showServerError();
     return;
   }
@@ -1006,6 +1082,29 @@ function buyShopItem(itemId, assignee) {
   if(!item) return;
   const bal = coinsBalance(assignee);
   if(bal < item.price) { alert('Fótons insuficientes!'); return; }
+
+  if (item.special === 'sabotage') {
+    if (state.sabotages.some(s => s.from === assignee && s.date === todayStr())) {
+      alert('Você já usou uma sabotagem hoje!'); return;
+    }
+    openSabotageModal(assignee, item); return;
+  }
+
+  if (item.special === 'shield') {
+    if (state.shields.some(s => s.assignee === assignee && s.date === todayStr())) {
+      alert('Você já comprou um escudo hoje!'); return;
+    }
+    state.purchases.push({ id:uid(), itemId, assignee, emoji:item.emoji, name:item.name, price:item.price, special:'shield', at:Date.now() });
+    state.shields.push({ id:uid(), assignee, date:todayStr(), consumed:false });
+    saveState(); renderTab();
+    const pop=document.createElement('div');
+    pop.className='point-popup';
+    pop.style.cssText=`left:50%;top:80px;transform:translateX(-50%);color:var(--green);text-shadow:0 0 12px rgba(105,240,174,.5);font-size:1.05rem;white-space:nowrap;`;
+    pop.textContent=`🛡️ Escudo ativado! -${item.price}⚡`;
+    document.body.appendChild(pop); setTimeout(()=>pop.remove(),1600);
+    return;
+  }
+
   state.purchases.push({ id:uid(), itemId, assignee, emoji:item.emoji, name:item.name, price:item.price, special:item.special||null, at:Date.now() });
   if(item.special==='extra_spin_weekly')  state.extraSpins.push({ id:uid(), type:'extra_spin_weekly',  assignee, used:false, at:Date.now() });
   if(item.special==='extra_spin_monthly') state.extraSpins.push({ id:uid(), type:'extra_spin_monthly', assignee, used:false, at:Date.now() });
@@ -1031,6 +1130,70 @@ function winnerBadge(ds,compact=false) {
   if(a>k) return compact?'💙':'💙 Alex';
   if(k>a) return compact?'💗':'💗 Ket';
   return '🤝';
+}
+
+// ======================== SABOTAGE ========================
+let _sabItem = null, _sabBuyer = null;
+
+function openSabotageModal(buyerAssignee, item) {
+  _sabBuyer = buyerAssignee; _sabItem = item;
+  const partnerName = buyerAssignee === 'alex' ? 'Kétellyn' : 'Alex';
+  document.getElementById('sabotageTargetName').textContent = partnerName;
+  document.getElementById('sabotageTaskTitle').value = '';
+  document.getElementById('modalSabotage').hidden = false;
+  setTimeout(() => document.getElementById('sabotageTaskTitle').focus(), 80);
+}
+
+function confirmSabotage() {
+  const title = document.getElementById('sabotageTaskTitle').value.trim();
+  if (!title) { document.getElementById('sabotageTaskTitle').focus(); return; }
+
+  const buyer  = _sabBuyer;
+  const target = buyer === 'alex' ? 'ketellyn' : 'alex';
+  const item   = _sabItem;
+  const today  = todayStr();
+
+  // Debita o custo mesmo em caso de escudo
+  state.purchases.push({ id:uid(), itemId:item.id, assignee:buyer, emoji:item.emoji, name:item.name, price:item.price, special:'sabotage', at:Date.now() });
+
+  // Verifica escudo do alvo
+  const shield = (state.shields||[]).find(s => s.assignee === target && s.date === today && !s.consumed);
+  if (shield) {
+    shield.consumed = true;
+    state.sabotages.push({ id:uid(), from:buyer, to:target, date:today, taskId:null, shieldBlocked:true, penaltyApplied:true });
+    saveState();
+    document.getElementById('modalSabotage').hidden = false; // keep open briefly
+    const partnerName = target === 'alex' ? 'Alex' : 'Kétellyn';
+    document.getElementById('modalSabotage').hidden = true;
+    alert(`🛡️ ${partnerName} tem um Escudo Anti-Sabotagem ativo!\n\nSua sabotagem foi bloqueada — mas os fótons foram debitados mesmo assim.`);
+    renderTab(); return;
+  }
+
+  // Cria a tarefa de sabotagem para o alvo
+  const taskId = uid(), sabId = uid();
+  const maxOrd = state.tasks.reduce((m,t) => Math.max(m, t.order||0), -1);
+  state.tasks.push({
+    id: taskId, title: `💣 ${title}`, points: 0,
+    assignee: target, type: 'avulso', date: today,
+    isSabotage: true, sabotageId: sabId,
+    category: 'outros', order: -9999
+  });
+  state.sabotages.push({ id:sabId, from:buyer, to:target, date:today, taskId, shieldBlocked:false, penaltyApplied:false });
+
+  saveState();
+  document.getElementById('modalSabotage').hidden = true;
+
+  const partnerName = target === 'alex' ? 'Alex' : 'Kétellyn';
+  const pop = document.createElement('div');
+  pop.className = 'point-popup';
+  pop.style.cssText = `left:50%;top:80px;transform:translateX(-50%);color:var(--red);text-shadow:0 0 12px rgba(239,83,80,.6);font-size:1rem;white-space:nowrap;`;
+  pop.textContent = `💣 Sabotagem enviada para ${partnerName}! -${item.price}⚡`;
+  document.body.appendChild(pop); setTimeout(() => pop.remove(), 1800);
+  renderTab();
+}
+
+function hasActiveShield(assignee) {
+  return (state.shields||[]).some(s => s.assignee === assignee && s.date === todayStr() && !s.consumed);
 }
 
 // ======================== PRIZE/SPIN LOGIC ========================
@@ -1222,22 +1385,44 @@ function buildDayTab() {
 function buildPersonCol(assignee,name,emoji,dateStr) {
   const cls=assignee==='alex'?'alex':'ket';
   const tasks=getTasksForDay(dateStr,assignee);
+  const sabotageTasks=tasks.filter(t=>t.isSabotage);
+  const regularTasks=tasks.filter(t=>!t.isSabotage);
   const pts=ptsForDate(assignee,dateStr);
   const done=tasks.filter(t=>isCompleted(t.id,assignee,dateStr)).length;
+  const possible=regularTasks.reduce((s,t)=>s+t.points,0);
+
+  // Tarefas de sabotagem no topo
+  let sabHtml='';
+  if(sabotageTasks.length>0 && dateStr===todayStr()) {
+    const endTs=new Date(dateStr+'T23:59:59').getTime();
+    sabHtml=sabotageTasks.map(t=>{
+      const checked=isCompleted(t.id,assignee,dateStr);
+      const timerHtml=checked
+        ?`<div class="sabotage-timer done">✓ Concluída — penalidade evitada</div>`
+        :`<div class="sabotage-timer" data-end="${endTs}">⏱ calculando...</div>`;
+      return `<div class="task-item sabotage-task ${checked?'completed':''}" data-task="${t.id}" data-who="${assignee}" data-date="${dateStr}">
+        <div class="task-check ${checked?'checked':''}">${checked?'✓':''}</div>
+        <div class="task-info">
+          <div class="task-title">${esc(t.title)} <span class="sabotage-badge">💣 Sabotagem</span></div>
+          ${timerHtml}
+        </div>
+      </div>`;
+    }).join('');
+  }
 
   let taskHtml='';
-  if(tasks.length===0) {
+  if(regularTasks.length===0 && sabotageTasks.length===0) {
     taskHtml=`<div class="empty-state">Sem tarefas hoje!<br>🎉 Dia livre!</div>`;
-  } else {
+  } else if(regularTasks.length>0) {
     // Agrupar por categoria
     const groups=new Map();
-    tasks.forEach(t=>{
+    regularTasks.forEach(t=>{
       const cid=t.category||'outros';
       if(!groups.has(cid)) groups.set(cid,[]);
       groups.get(cid).push(t);
     });
-    // Exibir na ordem de TASK_CATEGORIES
-    TASK_CATEGORIES.forEach(cat=>{
+    // Exibir na ordem de TASK_CATEGORIES + customCategories
+    getAllCategories().forEach(cat=>{
       const catTasks=groups.get(cat.id);
       if(!catTasks||catTasks.length===0) return;
       taskHtml+=`<div class="cat-header" style="--cat-color:${cat.color}">
@@ -1261,10 +1446,10 @@ function buildPersonCol(assignee,name,emoji,dateStr) {
       <div class="person-avatar">${emoji}</div>
       <div>
         <div class="person-name">${name}</div>
-        <div class="person-sub">${done}/${tasks.length} tarefas concluídas</div>
+        <div class="person-sub">${done}/${tasks.length} tarefas · até ${possible}⚡</div>
       </div>
     </div>
-    <div class="task-list">${taskHtml}</div>
+    <div class="task-list">${sabHtml}${taskHtml}</div>
     <div class="person-footer">
       <div class="score-display">${pts}</div>
       <div class="score-label">⚡ pontos hoje</div>
@@ -1324,7 +1509,8 @@ function buildWeekTab() {
         <div class="winner-badge">${wa>wk?'💙 Alex':wk>wa?'💗 Ket':wa===0&&wk===0?'-':'🤝'}</div>
       </div>
     </div>
-    ${buildWinnerSection('weekly', weekKey, wa, wk)}`;
+    ${buildWinnerSection('weekly', weekKey, wa, wk)}
+    ${buildCategoryStats(new Set(past))}`;
 }
 
 // ---- MONTH ----
@@ -1364,7 +1550,8 @@ function buildMonthTab() {
       </div>
       ${rows}
     </div>
-    ${buildWinnerSection('monthly', monthKey, ma, mk)}`;
+    ${buildWinnerSection('monthly', monthKey, ma, mk)}
+    ${buildCategoryStats(new Set(past))}`;
 }
 
 // ---- WINNER SECTION ----
@@ -1502,7 +1689,7 @@ function buildRankingTab() {
       ${buildRankCard('ketellyn','Kétellyn','💫',kt,kd,kw)}
     </div>
     ${barHtml}
-    ${buildCategoryStats()}
+    ${buildCategoryStats(null)}
     ${buildValesSection()}`;
 }
 
@@ -1524,42 +1711,51 @@ function buildRankCard(assignee,name,emoji,total,done,wins) {
 }
 
 // ---- CATEGORY STATS ----
-function buildCategoryStats() {
-  const stats={};
-  TASK_CATEGORIES.forEach(c=>{ stats[c.id]={alex:0,ket:0}; });
-  state.completions.forEach(c=>{
+// dateSet: Set de strings de datas para filtrar. null = todos os tempos
+function buildCategoryStats(dateSet) {
+  const allCats = getAllCategories();
+  const catMap  = Object.fromEntries(allCats.map(c=>[c.id,c]));
+  const stats   = {};
+  allCats.forEach(c=>{ stats[c.id]={alex:0,ket:0,pts:{alex:0,ket:0}}; });
+
+  const completions = dateSet
+    ? state.completions.filter(c=>dateSet.has(c.date))
+    : state.completions;
+
+  completions.forEach(c=>{
     const task=state.tasks.find(t=>t.id===c.taskId);
     const cid=(task&&task.category)||'outros';
-    if(!stats[cid]) stats[cid]={alex:0,ket:0};
-    if(c.assignee==='alex') stats[cid].alex++;
-    else if(c.assignee==='ketellyn') stats[cid].ket++;
+    if(!stats[cid]) stats[cid]={alex:0,ket:0,pts:{alex:0,ket:0}};
+    if(c.assignee==='alex')     { stats[cid].alex++; stats[cid].pts.alex+=(c.points||0); }
+    else if(c.assignee==='ketellyn') { stats[cid].ket++;  stats[cid].pts.ket+=(c.points||0); }
   });
-  const active=TASK_CATEGORIES.filter(c=>(stats[c.id]?.alex||0)+(stats[c.id]?.ket||0)>0);
+
+  const active=allCats.filter(c=>(stats[c.id]?.alex||0)+(stats[c.id]?.ket||0)>0);
   if(active.length===0) return '';
 
   const rows=active.map(cat=>{
     const s=stats[cat.id];
     const total=s.alex+s.ket;
-    const aPct=Math.round((s.alex/total)*100);
+    const aPct=total>0?Math.round((s.alex/total)*100):50;
     const kPct=100-aPct;
     return `<div class="cat-stat-row">
       <div class="cat-stat-hdr">
-        <span style="font-weight:800">${cat.emoji} ${cat.label}</span>
-        <span style="color:var(--text-dim);font-size:.72rem">${total} tarefa${total!==1?'s':''}</span>
+        <span style="font-weight:800;font-size:.83rem">${cat.emoji} ${cat.label}</span>
+        <span style="color:var(--text-dim);font-size:.7rem">${total} tarefa${total!==1?'s':''}</span>
       </div>
       <div class="bar-track" style="height:8px;border-radius:4px;margin:5px 0 3px">
         <div class="bar-alex" style="width:${aPct}%;border-radius:4px 0 0 4px"></div>
         <div class="bar-ket"  style="width:${kPct}%;border-radius:0 4px 4px 0"></div>
       </div>
       <div class="bar-labels" style="font-size:.7rem">
-        <span style="color:var(--alex)">💙 Alex ${s.alex}</span>
-        <span style="color:var(--ket)">💗 Ket ${s.ket}</span>
+        <span style="color:var(--alex)">💙 ${s.alex} (${s.pts.alex}⚡)</span>
+        <span style="color:var(--ket)">💗 ${s.ket} (${s.pts.ket}⚡)</span>
       </div>
     </div>`;
   }).join('');
 
   return `<div class="comparison-block" style="margin-top:14px">
-    <h3>📊 Tarefas por Categoria</h3>
+    <h3>📊 Por Categoria</h3>
     <div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">${rows}</div>
   </div>`;
 }
@@ -1628,13 +1824,13 @@ function buildValeCard(vale, isActive) {
 // ======================== SHOP TAB ========================
 function buildShopTab() {
   const ab = coinsBalance('alex'), kb = coinsBalance('ketellyn');
-  const items = (state.shopItems||[]).filter(i=>i.enabled!==false);
+  const items = (state.shopItems||[]).filter(i=>i.enabled!==false).sort((a,b)=>(a.price||0)-(b.price||0));
 
   const grid = items.length
     ? items.map(item=>buildShopItemCard(item,ab,kb)).join('')
     : `<div class="empty-state" style="padding:20px;grid-column:1/-1">Nenhum item disponível.</div>`;
 
-  const allPurchases = [...(state.purchases||[])].reverse();
+  const allPurchases = [...(state.purchases||[])].filter(p=>p.special!=='sabotage'&&p.special!=='shield').reverse();
   const histHtml = allPurchases.length===0
     ? `<div class="empty-state" style="padding:16px">Nenhuma compra ainda — gaste seus fótons!</div>`
     : allPurchases.slice(0,15).map(p=>{
@@ -1678,11 +1874,24 @@ function buildShopTab() {
 
 function buildShopItemCard(item, alexBal, ketBal) {
   const isSpecial = !!item.special;
-  const alexCan = alexBal >= item.price;
-  const ketCan  = ketBal  >= item.price;
-  const specialBadge = isSpecial
-    ? `<div class="sic-special-badge">${item.special==='extra_spin_weekly'?'🎡 +Giro Semanal':'🎰 +Giro Mensal'}</div>`
-    : '';
+  const today = todayStr();
+  // Limites diários para sabotagem e escudo
+  const sabs = state.sabotages||[], shds = state.shields||[];
+  const alexSabUsed  = item.special==='sabotage' && sabs.some(s=>s.from==='alex'&&s.date===today);
+  const ketSabUsed   = item.special==='sabotage' && sabs.some(s=>s.from==='ketellyn'&&s.date===today);
+  const alexShieldHas= item.special==='shield'   && shds.some(s=>s.assignee==='alex'&&s.date===today);
+  const ketShieldHas = item.special==='shield'   && shds.some(s=>s.assignee==='ketellyn'&&s.date===today);
+  const alexBlocked  = alexSabUsed||alexShieldHas;
+  const ketBlocked   = ketSabUsed||ketShieldHas;
+  const alexCan = alexBal >= item.price && !alexBlocked;
+  const ketCan  = ketBal  >= item.price && !ketBlocked;
+  const alexLabel = alexBlocked?'Usado hoje':alexBal>=item.price?'Comprar':'Sem ⚡';
+  const ketLabel  = ketBlocked ?'Usado hoje':ketBal >=item.price?'Comprar':'Sem ⚡';
+  const specialBadge = isSpecial ? `<div class="sic-special-badge">${
+    item.special==='extra_spin_weekly'?'🎡 +Giro Semanal':
+    item.special==='extra_spin_monthly'?'🎰 +Giro Mensal':
+    item.special==='sabotage'?'💣 Sabotagem':
+    item.special==='shield'?'🛡️ Escudo':''}</div>` : '';
   return `<div class="shop-item-card ${isSpecial?'special-card':''}">
     ${specialBadge}
     <div class="sic-emoji">${item.emoji}</div>
@@ -1690,11 +1899,11 @@ function buildShopItemCard(item, alexBal, ketBal) {
     <div class="sic-desc">${esc(item.desc)}</div>
     <div class="sic-price">${item.price} ⚡</div>
     <div class="sic-buy-row">
-      <button class="sic-buy-btn alex" data-item="${item.id}" data-who="alex" ${!alexCan?'disabled':''} title="${alexCan?'Comprar':'Fótons insuficientes'}">
-        💙 ${alexCan?'Comprar':'Sem ⚡'}
+      <button class="sic-buy-btn alex" data-item="${item.id}" data-who="alex" ${!alexCan?'disabled':''}>
+        💙 ${alexLabel}
       </button>
-      <button class="sic-buy-btn ket" data-item="${item.id}" data-who="ketellyn" ${!ketCan?'disabled':''} title="${ketCan?'Comprar':'Fótons insuficientes'}">
-        💗 ${ketCan?'Comprar':'Sem ⚡'}
+      <button class="sic-buy-btn ket" data-item="${item.id}" data-who="ketellyn" ${!ketCan?'disabled':''}>
+        💗 ${ketLabel}
       </button>
     </div>
   </div>`;
@@ -1832,7 +2041,11 @@ function renderShopManageBody() {
       <div class="manage-task-info">
         <div class="manage-task-title">${item.emoji} ${esc(item.name)} · ${item.price}⚡</div>
         <div class="manage-task-meta">
-          ${item.special?`<span class="badge badge-rec">${item.special==='extra_spin_weekly'?'🎡':'🎰'} Especial</span>`:''}
+          ${item.special?`<span class="badge badge-rec">${
+            item.special==='extra_spin_weekly'?'🎡 Giro Semanal':
+            item.special==='extra_spin_monthly'?'🎰 Giro Mensal':
+            item.special==='sabotage'?'💣 Sabotagem':
+            item.special==='shield'?'🛡️ Escudo':'Especial'} </span>`:''}
           <span class="badge ${dis?'badge-ambos':'badge-rec'}">${dis?'Desativado':'Ativo'}</span>
         </div>
       </div>
@@ -1919,9 +2132,29 @@ function saveShopItem() {
 }
 
 // ======================== TAB EVENTS ========================
+let _sabTimerInterval = null;
+function _startSabTimers() {
+  if(_sabTimerInterval) clearInterval(_sabTimerInterval);
+  function _tick() {
+    document.querySelectorAll('.sabotage-timer[data-end]').forEach(el=>{
+      const diff=parseInt(el.dataset.end)-Date.now();
+      if(diff<=0){el.textContent='⏰ Tempo esgotado!';return;}
+      const h=Math.floor(diff/3600000);
+      const m=Math.floor((diff%3600000)/60000);
+      const s=Math.floor((diff%60000)/1000);
+      el.textContent=`⏱ ${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s para meia-noite`;
+    });
+  }
+  _tick();
+  _sabTimerInterval=setInterval(_tick,1000);
+}
+
 function bindTabEvents() {
   if(currentTab==='dia') {
     document.querySelectorAll('.task-item').forEach(el=>el.addEventListener('click',onTaskClick));
+    _startSabTimers();
+  } else {
+    if(_sabTimerInterval){clearInterval(_sabTimerInterval);_sabTimerInterval=null;}
   }
   if(currentTab==='semana') {
     document.getElementById('btnPrevWeek')?.addEventListener('click',()=>shiftWeek(-1));
@@ -2100,13 +2333,59 @@ function buildDayToggles() {
 function buildCategoryToggles() {
   const c=document.getElementById('categoryGroup');
   if(!c) return;
-  c.innerHTML=TASK_CATEGORIES.map(cat=>`
+  const all=getAllCategories();
+  c.innerHTML=all.map(cat=>`
     <button class="cat-toggle-btn ${selCategory===cat.id?'active':''}" data-cat="${cat.id}" style="--cat-color:${cat.color}">
       ${cat.emoji} ${cat.label}
-    </button>`).join('');
-  c.querySelectorAll('.cat-toggle-btn').forEach(b=>b.addEventListener('click',()=>{
+    </button>`).join('')
+  + `<button class="cat-toggle-btn cat-toggle-new" id="btnNewCategory" style="--cat-color:#888;border-style:dashed">
+      ➕ Nova
+    </button>`;
+  c.querySelectorAll('.cat-toggle-btn:not(.cat-toggle-new)').forEach(b=>b.addEventListener('click',()=>{
     selCategory=b.dataset.cat; buildCategoryToggles();
   }));
+  c.querySelector('#btnNewCategory')?.addEventListener('click', openNewCategoryInline);
+}
+
+function openNewCategoryInline() {
+  const c=document.getElementById('categoryGroup');
+  if(!c) return;
+  // Auto-escolhe cor que ainda não foi usada
+  const usedColors=getAllCategories().map(x=>x.color);
+  const newColor=CAT_PALETTE.find(col=>!usedColors.includes(col))||CAT_PALETTE[Math.floor(Math.random()*CAT_PALETTE.length)];
+  c.insertAdjacentHTML('afterend',`
+    <div id="newCatForm" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;padding:10px;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border)">
+      <input id="ncEmoji" placeholder="emoji" style="width:52px;text-align:center;font-size:1.2rem;padding:6px 4px;" class="form-input" maxlength="4" value="🏷️"/>
+      <input id="ncLabel" placeholder="Nome da categoria" class="form-input" style="flex:1;min-width:120px" maxlength="20"/>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${CAT_PALETTE.map(col=>`
+        <button class="nc-color-dot ${col===newColor?'nc-dot-active':''}" data-color="${col}" style="width:22px;height:22px;border-radius:50%;background:${col};border:2px solid ${col===newColor?'white':'transparent'};cursor:pointer;"></button>`).join('')}</div>
+      <div style="display:flex;gap:6px;width:100%">
+        <button class="btn-sm" id="btnSaveNewCat">✓ Criar</button>
+        <button class="btn-sm-ghost" id="btnCancelNewCat">Cancelar</button>
+      </div>
+    </div>`);
+  let _ncColor=newColor;
+  document.querySelectorAll('.nc-color-dot').forEach(dot=>{
+    dot.addEventListener('click',()=>{
+      _ncColor=dot.dataset.color;
+      document.querySelectorAll('.nc-color-dot').forEach(d=>{ d.style.borderColor=d===dot?'white':'transparent'; d.classList.toggle('nc-dot-active',d===dot); });
+    });
+  });
+  document.getElementById('btnCancelNewCat').addEventListener('click',()=>{
+    document.getElementById('newCatForm')?.remove();
+  });
+  document.getElementById('btnSaveNewCat').addEventListener('click',()=>{
+    const emoji=document.getElementById('ncEmoji').value.trim()||'🏷️';
+    const label=document.getElementById('ncLabel').value.trim();
+    if(!label){ document.getElementById('ncLabel').focus(); return; }
+    const id='cat_'+uid();
+    state.customCategories.push({id,emoji,label,color:_ncColor});
+    selCategory=id;
+    saveState();
+    document.getElementById('newCatForm')?.remove();
+    buildCategoryToggles();
+  });
+  document.getElementById('ncEmoji').focus();
 }
 
 function saveTask() {
@@ -2153,6 +2432,12 @@ document.getElementById('btnCloseShopItem').addEventListener('click',()=>{docume
 document.getElementById('modalShopItem').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalShopItem').hidden=true;});
 
 document.getElementById('siSpecialGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;siSelSpecial=b.dataset.val;syncSiSpecialUI();});
+
+document.getElementById('btnCloseSabotage').addEventListener('click',()=>{document.getElementById('modalSabotage').hidden=true;});
+document.getElementById('btnCancelSabotage').addEventListener('click',()=>{document.getElementById('modalSabotage').hidden=true;});
+document.getElementById('btnConfirmSabotage').addEventListener('click',confirmSabotage);
+document.getElementById('modalSabotage').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('modalSabotage').hidden=true;});
+document.getElementById('sabotageTaskTitle').addEventListener('keydown',e=>{if(e.key==='Enter')confirmSabotage();});
 
 document.getElementById('assigneeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selAssignee=b.dataset.val;syncAssigneeUI();});
 document.getElementById('typeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selType=b.dataset.val;syncTypeUI();});
