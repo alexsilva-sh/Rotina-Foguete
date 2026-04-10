@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
@@ -397,6 +397,24 @@
     .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
     .btn-danger { padding: 12px 16px; border: 1px solid rgba(239,83,80,.4); border-radius: var(--r-sm); background: rgba(239,83,80,.1); color: var(--red); font-family: inherit; font-size: .92rem; font-weight: 800; cursor: pointer; transition: all .2s; }
     .btn-danger:hover { background: rgba(239,83,80,.2); }
+    .toggle-btn.reminder-on { background: rgba(255,215,0,.15); border-color: var(--gold); color: var(--gold); }
+    /* Alarm banner */
+    #alarmBanner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-bottom: 2px solid var(--gold);
+      padding: 14px 20px; display: flex; align-items: center; gap: 14px;
+      transform: translateY(-100%); transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+    }
+    #alarmBanner.visible { transform: translateY(0); }
+    .alarm-icon { font-size: 1.6rem; animation: alarmRing .5s infinite alternate; flex-shrink:0; }
+    @keyframes alarmRing { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
+    .alarm-info { flex: 1; min-width: 0; }
+    .alarm-title { font-weight: 900; font-size: 1rem; color: var(--gold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .alarm-sub { font-size: .75rem; color: var(--text-dim); margin-top: 2px; }
+    .alarm-close { background: rgba(255,215,0,.15); border: 1px solid var(--gold); border-radius: 8px; color: var(--gold); font-family: inherit; font-weight: 800; font-size: .82rem; padding: 6px 14px; cursor: pointer; white-space:nowrap; flex-shrink:0; }
+    .alarm-close:hover { background: rgba(255,215,0,.3); }
     .manage-list { display: flex; flex-direction: column; gap: 8px; }
     .manage-task-item { display: flex; align-items: center; gap: 10px; background: var(--surface2); border-radius: var(--r-sm); border: 1px solid var(--border); padding: 11px 12px; transition: border-color .2s, background .2s; }
     .manage-task-item.dragging { opacity: .45; }
@@ -558,6 +576,16 @@
 
 <main class="content" id="mainContent"></main>
 
+<!-- Alarm Banner -->
+<div id="alarmBanner">
+  <div class="alarm-icon">🔔</div>
+  <div class="alarm-info">
+    <div class="alarm-title" id="alarmTitle">Lembrete</div>
+    <div class="alarm-sub" id="alarmSub"></div>
+  </div>
+  <button class="alarm-close" id="alarmClose">OK ✓</button>
+</div>
+
 <!-- Manage Tasks Modal -->
 <div class="modal-overlay" id="modalManage" hidden>
   <div class="modal">
@@ -607,12 +635,69 @@
         <div class="cat-toggle-grid" id="categoryGroup"></div>
       </div>
       <div class="form-group" id="daysGroup">
-        <label class="form-label">Dias da semana <span style="font-weight:400;text-transform:none;font-size:.9em;">(nenhum = todos)</span></label>
-        <div class="day-toggles" id="dayToggles"></div>
+        <label class="form-label">Como se repete</label>
+        <div class="toggle-group" id="recModeGroup">
+          <button class="toggle-btn active" data-val="weekly">📅 Dias da semana</button>
+          <button class="toggle-btn" data-val="n_days">🔁 A cada N dias</button>
+          <button class="toggle-btn" data-val="n_weeks">📆 A cada N semanas</button>
+          <button class="toggle-btn" data-val="monthly_day">🗓️ Todo mês</button>
+          <button class="toggle-btn" data-val="12x36">👷 12×36</button>
+        </div>
+        <!-- weekly + n_weeks: dias da semana -->
+        <div id="recDaysOfWeekGroup" style="margin-top:10px">
+          <div style="font-size:.72rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Dias da semana <span style="font-weight:400;text-transform:none;">(nenhum = todos)</span></div>
+          <div class="day-toggles" id="dayToggles"></div>
+        </div>
+        <!-- n_days: intervalo + data de referência -->
+        <div id="recNDaysGroup" style="margin-top:10px;display:none">
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label" style="font-size:.72rem;">Repetir a cada</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input class="form-input" id="inputIntervalDays" type="number" min="1" max="365" value="2"/>
+                <span style="color:var(--text-dim);font-size:.82rem;white-space:nowrap">dias</span>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label" style="font-size:.72rem;">A partir de</label>
+              <input class="form-input" id="inputRefDate" type="date"/>
+            </div>
+          </div>
+        </div>
+        <!-- n_weeks: intervalo de semanas -->
+        <div id="recNWeeksGroup" style="margin-top:10px;display:none">
+          <label class="form-label" style="font-size:.72rem;">Repetir a cada</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="form-input" id="inputIntervalWeeks" type="number" min="1" max="52" value="2"/>
+            <span style="color:var(--text-dim);font-size:.82rem;white-space:nowrap">semanas</span>
+          </div>
+        </div>
+        <!-- monthly_day: dia do mês -->
+        <div id="recMonthlyGroup" style="margin-top:10px;display:none">
+          <label class="form-label" style="font-size:.72rem;">Dia do mês</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="form-input" id="inputMonthDay" type="number" min="1" max="31" value="1"/>
+            <span style="color:var(--text-dim);font-size:.82rem;white-space:nowrap">de cada mês</span>
+          </div>
+        </div>
+        <!-- 12x36: data de referência -->
+        <div id="rec12x36Group" style="margin-top:10px;display:none">
+          <label class="form-label" style="font-size:.72rem;">Dia de trabalho (referência)</label>
+          <input class="form-input" id="inputRef12x36" type="date"/>
+          <div style="font-size:.75rem;color:var(--text-dim);margin-top:6px;line-height:1.4">A tarefa aparece neste dia e a cada 2 dias a partir dele. Ex: dia 10 → 10, 12, 14, 16…</div>
+        </div>
       </div>
       <div class="form-group" id="dateGroup" style="display:none">
         <label class="form-label">Data</label>
         <input class="form-input" id="inputDate" type="date"/>
+      </div>
+      <div class="form-group" id="reminderGroup">
+        <label class="form-label">Lembrete</label>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button class="toggle-btn" id="reminderToggle">🔕 Desativado</button>
+          <input class="form-input" id="inputReminderTime" type="time" value="08:00" style="width:130px;display:none"/>
+          <span id="reminderHint" style="font-size:.72rem;color:var(--text-dim);display:none">Toca quando chegar o horário</span>
+        </div>
       </div>
       <div class="form-actions" id="taskFormActions">
         <button class="btn-primary" id="btnSaveTask">Salvar Tarefa</button>
@@ -809,7 +894,8 @@ const DEFAULT_SHOP_ITEMS = [
   { id:'si_vinho',    emoji:'🍷', name:'Taça de Vinho',            price:200,   desc:'Uma taça especial para relaxar juntos',                      special:null,                 enabled:true },
   { id:'si_massagem', emoji:'💆', name:'Massagem 10min',           price:220,   desc:'Massagem relaxante de 10 minutos do parceiro',               special:null,                 enabled:true },
   { id:'si_pizza',    emoji:'🍕', name:'Pizza da Noite',           price:300,   desc:'Pizza no sabor que você quiser para o jantar',               special:null,                 enabled:true },
-  { id:'si_cama',     emoji:'🛌', name:'Manhã na Cama',            price:400,   desc:'Café na cama + hora livre antes de levantar',                special:null,                 enabled:true },
+  { id:'si_jantar',   emoji:'🍽️', name:'Jantar fora',             price:300,   desc:'Pode escolher para jantar fora',                             special:null,                 enabled:true },
+  { id:'si_cama',     emoji:'😴', name:'Manhã na Cama',            price:400,   desc:'Café na cama + hora livre antes de levantar',                special:null,                 enabled:true },
   { id:'si_dieta',    emoji:'😋', name:'Dia Livre de Dieta',       price:500,   desc:'Comer o que quiser sem o outro comentar',                    special:null,                 enabled:true },
   { id:'si_passeio',  emoji:'🏖️', name:'Passeio Surpresa',        price:600,   desc:'O outro escolhe o programa, quero um passeio.',              special:null,                 enabled:true },
   { id:'si_xsemanal', emoji:'🎡', name:'+1 Giro Semanal',          price:5000,  desc:'Ganha um giro extra na roleta da semana atual',              special:'extra_spin_weekly',  enabled:true },
@@ -1025,13 +1111,46 @@ function getLevelProgress(pts) {
   return Math.min(100,Math.round(((pts-lv.min)/(lv.next-lv.min))*100));
 }
 
+function taskActiveOnDate(t, dateStr) {
+  if(t.type!=='recorrente') return t.date===dateStr;
+  const mode=t.recurrenceMode||'weekly';
+  const d=fromStr(dateStr);
+  const dow=d.getDay();
+  if(mode==='weekly') return t.days.length===0||t.days.includes(dow);
+  if(mode==='n_days'){
+    if(!t.referenceDate) return false;
+    const ref=fromStr(t.referenceDate);
+    const diff=Math.round((d-ref)/86400000);
+    return diff>=0 && diff%(Math.max(1,t.intervalDays||2))===0;
+  }
+  if(mode==='n_weeks'){
+    const refStr=t.referenceDate||todayStr();
+    const refDate=fromStr(refStr);
+    const refDow=refDate.getDay();
+    const refMonday=new Date(refDate); refMonday.setDate(refDate.getDate()-((refDow+6)%7));
+    const curDow=d.getDay();
+    const curMonday=new Date(d); curMonday.setDate(d.getDate()-((curDow+6)%7));
+    const weeksElapsed=Math.round((curMonday-refMonday)/(7*86400000));
+    if(weeksElapsed<0) return false;
+    const weekOk=weeksElapsed%(Math.max(1,t.intervalWeeks||2))===0;
+    const dayOk=t.days.length===0||t.days.includes(dow);
+    return weekOk&&dayOk;
+  }
+  if(mode==='monthly_day') return d.getDate()===(t.monthDay||1);
+  if(mode==='12x36'){
+    if(!t.ref12x36) return false;
+    const ref=fromStr(t.ref12x36);
+    const diff=Math.round((d-ref)/86400000);
+    return diff>=0 && diff%2===0;
+  }
+  return false;
+}
+
 function getTasksForDay(dateStr, assignee) {
-  const dow = fromStr(dateStr).getDay();
   return state.tasks
     .filter(t=>{
       if(t.assignee!==assignee && t.assignee!=='ambos') return false;
-      if(t.type==='recorrente') return t.days.length===0 || t.days.includes(dow);
-      return t.date===dateStr;
+      return taskActiveOnDate(t, dateStr);
     })
     .sort((a,b)=>(a.order||0)-(b.order||0));
 }
@@ -2227,10 +2346,16 @@ function renderManageBody() {
   const listHtml=sorted.map((t,i)=>{
     const ab=t.assignee==='alex'?'badge-alex':t.assignee==='ketellyn'?'badge-ket':'badge-ambos';
     const al=t.assignee==='alex'?'💙 Alex':t.assignee==='ketellyn'?'💗 Kétellyn':'🤝 Ambos';
-    const dayLabel=t.type==='recorrente'&&t.days.length>0
-      ?`<span class="badge badge-ambos">${t.days.map(d=>DAY_SHORT[d]).join(', ')}</span>`
-      :t.type==='recorrente'?`<span class="badge badge-ambos">Todos os dias</span>`
-      :t.date?`<span class="badge badge-ambos">${t.date}</span>`:'';
+    const dayLabel=(()=>{
+      if(t.type!=='recorrente') return t.date?`<span class="badge badge-ambos">${t.date}</span>`:'';
+      const mode=t.recurrenceMode||'weekly';
+      if(mode==='weekly') return t.days.length>0?`<span class="badge badge-ambos">${t.days.map(d=>DAY_SHORT[d]).join(', ')}</span>`:`<span class="badge badge-ambos">Todos os dias</span>`;
+      if(mode==='n_days') return `<span class="badge badge-ambos">A cada ${t.intervalDays||2} dias</span>`;
+      if(mode==='n_weeks') return `<span class="badge badge-ambos">A cada ${t.intervalWeeks||2} semanas${t.days.length>0?' ('+t.days.map(d=>DAY_SHORT[d]).join(', ')+')'  :''}</span>`;
+      if(mode==='monthly_day') return `<span class="badge badge-ambos">Dia ${t.monthDay||1} do m\xEAs</span>`;
+      if(mode==='12x36') return `<span class="badge badge-ambos">12x36</span>`;
+      return '';
+    })();
     return `<div class="manage-task-item" draggable="true" data-idx="${i}" data-tid="${t.id}">
       <div class="drag-handle">⠿</div>
       <div class="manage-task-info">
@@ -2240,6 +2365,7 @@ function renderManageBody() {
           <span class="badge ${t.type==='recorrente'?'badge-rec':'badge-avulso'}">${t.type==='recorrente'?'🔄 Recorrente':'📌 Avulso'}</span>
           ${(()=>{ const c=getCategory(t); return `<span class="badge" style="background:var(--surface2);color:${c.color}">${c.emoji} ${c.label}</span>`; })()}
           ${dayLabel}
+          ${t.reminder?.enabled?`<span class="badge" style="background:rgba(255,215,0,.12);color:var(--gold)">⏰ ${t.reminder.time}</span>`:''}
         </div>
       </div>
       <div class="manage-task-btns">
@@ -2283,8 +2409,102 @@ function removeTask(taskId) {
   saveState();renderManageBody();renderTab();
 }
 
+// ======================== ALARM ENGINE ========================
+const _firedReminders = new Set();
+
+function playAlarmThenSpeak(task) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const beep = (freq, start, dur) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, ctx.currentTime + start);
+      gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + start + 0.02);
+      gain.gain.setValueAtTime(0.35, ctx.currentTime + start + dur - 0.05);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + start + dur);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + dur + 0.01);
+    };
+    beep(880, 0,    0.18);
+    beep(880, 0.25, 0.18);
+    beep(880, 0.5,  0.18);
+    beep(1046, 0.8, 0.35);
+    // Fala após o som terminar (~1.3s)
+    setTimeout(() => speakReminder(task), 1350);
+  } catch(e) {
+    speakReminder(task); // fallback: só a voz
+  }
+}
+
+function speakReminder(task) {
+  if (!window.speechSynthesis) return;
+  const cleanTitle = task.title.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').trim();
+  const [hh, mm] = (task.reminder?.time || '00:00').split(':');
+  const hora = mm === '00' ? `${parseInt(hh)} horas` : `${parseInt(hh)} horas e ${parseInt(mm)} minutos`;
+  const texto = `Lembrete para a tarefa ${cleanTitle}, às ${hora}.`;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(texto);
+  utter.lang = 'pt-BR';
+  utter.rate = 0.95;
+  utter.pitch = 1.05;
+  const voices = window.speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => v.lang === 'pt-BR') || voices.find(v => v.lang.startsWith('pt'));
+  if (ptVoice) utter.voice = ptVoice;
+  window.speechSynthesis.speak(utter);
+}
+
+let _alarmQueue = [];
+let _alarmShowing = false;
+
+function triggerReminder(task) {
+  playAlarmThenSpeak(task);
+  _alarmQueue.push(task);
+  if (!_alarmShowing) showNextAlarm();
+  if (Notification?.permission === 'granted') {
+    try { new Notification(`⏰ ${task.title}`, { body: 'Hora do lembrete!', silent: true }); } catch(e){}
+  }
+}
+
+function showNextAlarm() {
+  if (!_alarmQueue.length) { _alarmShowing = false; return; }
+  _alarmShowing = true;
+  const task = _alarmQueue.shift();
+  const banner = document.getElementById('alarmBanner');
+  document.getElementById('alarmTitle').textContent = task.title;
+  document.getElementById('alarmSub').textContent = `Lembrete das ${task.reminder.time} · ${task.points}⚡`;
+  banner.classList.add('visible');
+}
+
+function dismissAlarm() {
+  const banner = document.getElementById('alarmBanner');
+  banner.classList.remove('visible');
+  setTimeout(showNextAlarm, 450);
+}
+
+function checkReminders() {
+  if (!state?.tasks) return;
+  const now = new Date();
+  const dateStr = todayStr();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const timeStr = `${hh}:${mm}`;
+  state.tasks.forEach(t => {
+    if (!t.reminder?.enabled || !t.reminder?.time) return;
+    if (t.reminder.time !== timeStr) return;
+    const key = `${t.id}|${dateStr}|${timeStr}`;
+    if (_firedReminders.has(key)) return;
+    if (!taskActiveOnDate(t, dateStr)) return;
+    _firedReminders.add(key);
+    triggerReminder(t);
+  });
+}
+
 // ======================== TASK MODAL ========================
 let editId=null, selAssignee='alex', selType='recorrente', selDays=[], selCategory='outros';
+let selRecMode='weekly', selIntervalDays=2, selIntervalWeeks=2, selRefDate='', selMonthDay=1, selRef12x36='';
+let selReminderEnabled=false, selReminderTime='08:00';
 
 function openTaskModal(taskId) {
   editId=taskId;
@@ -2297,7 +2517,15 @@ function openTaskModal(taskId) {
   selType=task?task.type:'recorrente';
   selDays=task?[...(task.days||[])]:[];
   selCategory=task?(task.category||'outros'):'outros';
-  syncAssigneeUI();syncTypeUI();buildCategoryToggles();
+  selRecMode=task?.recurrenceMode||'weekly';
+  selIntervalDays=task?.intervalDays||2;
+  selIntervalWeeks=task?.intervalWeeks||2;
+  selRefDate=task?.referenceDate||todayStr();
+  selMonthDay=task?.monthDay||1;
+  selRef12x36=task?.ref12x36||todayStr();
+  selReminderEnabled=task?.reminder?.enabled||false;
+  selReminderTime=task?.reminder?.time||'08:00';
+  syncAssigneeUI();syncTypeUI();buildCategoryToggles();syncReminderUI();
   const actEl=document.getElementById('taskFormActions');
   if(task){
     actEl.innerHTML=`<button class="btn-danger" id="btnDelEdit">🗑️ Apagar</button><button class="btn-primary" id="btnSaveTask">Salvar</button>`;
@@ -2320,7 +2548,47 @@ function syncTypeUI() {
   document.querySelectorAll('#typeGroup .toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===selType));
   document.getElementById('daysGroup').style.display=selType==='recorrente'?'':'none';
   document.getElementById('dateGroup').style.display=selType==='avulso'?'':'none';
+  if(selType==='recorrente') syncRecModeUI();
+}
+function syncRecModeUI() {
+  document.querySelectorAll('#recModeGroup .toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===selRecMode));
+  const showDays = selRecMode==='weekly'||selRecMode==='n_weeks';
+  document.getElementById('recDaysOfWeekGroup').style.display=showDays?'':'none';
+  document.getElementById('recNDaysGroup').style.display=selRecMode==='n_days'?'':'none';
+  document.getElementById('recNWeeksGroup').style.display=selRecMode==='n_weeks'?'':'none';
+  document.getElementById('recMonthlyGroup').style.display=selRecMode==='monthly_day'?'':'none';
+  document.getElementById('rec12x36Group').style.display=selRecMode==='12x36'?'':'none';
+  if(selRecMode==='n_days'){
+    const el=document.getElementById('inputIntervalDays'); if(el) el.value=selIntervalDays;
+    const er=document.getElementById('inputRefDate'); if(er) er.value=selRefDate;
+  }
+  if(selRecMode==='n_weeks'){
+    const el=document.getElementById('inputIntervalWeeks'); if(el) el.value=selIntervalWeeks;
+  }
+  if(selRecMode==='monthly_day'){
+    const el=document.getElementById('inputMonthDay'); if(el) el.value=selMonthDay;
+  }
+  if(selRecMode==='12x36'){
+    const el=document.getElementById('inputRef12x36'); if(el) el.value=selRef12x36;
+  }
   buildDayToggles();
+}
+function syncReminderUI() {
+  const btn = document.getElementById('reminderToggle');
+  const inp = document.getElementById('inputReminderTime');
+  const hint = document.getElementById('reminderHint');
+  if(!btn) return;
+  if(selReminderEnabled) {
+    btn.textContent = '🔔 Ativado';
+    btn.classList.add('reminder-on');
+    inp.style.display = ''; inp.value = selReminderTime;
+    hint.style.display = '';
+  } else {
+    btn.textContent = '🔕 Desativado';
+    btn.classList.remove('reminder-on');
+    inp.style.display = 'none';
+    hint.style.display = 'none';
+  }
 }
 function buildDayToggles() {
   const c=document.getElementById('dayToggles');
@@ -2388,16 +2656,42 @@ function openNewCategoryInline() {
   document.getElementById('ncEmoji').focus();
 }
 
+function readRecurrenceFields() {
+  const rec={recurrenceMode:selRecMode};
+  if(selRecMode==='n_days'){
+    rec.intervalDays=Math.max(1,parseInt(document.getElementById('inputIntervalDays')?.value)||2);
+    rec.referenceDate=document.getElementById('inputRefDate')?.value||todayStr();
+  } else if(selRecMode==='n_weeks'){
+    rec.intervalWeeks=Math.max(1,parseInt(document.getElementById('inputIntervalWeeks')?.value)||2);
+    rec.referenceDate=selRefDate||todayStr(); // anchor week for the cycle
+  } else if(selRecMode==='monthly_day'){
+    rec.monthDay=Math.min(31,Math.max(1,parseInt(document.getElementById('inputMonthDay')?.value)||1));
+  } else if(selRecMode==='12x36'){
+    rec.ref12x36=document.getElementById('inputRef12x36')?.value||todayStr();
+  }
+  return rec;
+}
+
 function saveTask() {
   const title=document.getElementById('inputTitle').value.trim();
   const points=Math.max(1,parseInt(document.getElementById('inputPoints').value)||10);
   if(!title){document.getElementById('inputTitle').focus();return;}
+  const recFields=selType==='recorrente'?readRecurrenceFields():{};
+  const timeVal=document.getElementById('inputReminderTime')?.value||selReminderTime;
+  const reminderField={reminder:selReminderEnabled?{enabled:true,time:timeVal}:{enabled:false,time:timeVal}};
   if(editId){
     const t=state.tasks.find(x=>x.id===editId);
-    if(t){t.title=title;t.points=points;t.assignee=selAssignee;t.type=selType;t.category=selCategory;t.days=selType==='recorrente'?[...selDays]:[];t.date=selType==='avulso'?document.getElementById('inputDate').value:undefined;}
+    if(t){t.title=title;t.points=points;t.assignee=selAssignee;t.type=selType;t.category=selCategory;
+      t.days=selType==='recorrente'&&(selRecMode==='weekly'||selRecMode==='n_weeks')?[...selDays]:[];
+      t.date=selType==='avulso'?document.getElementById('inputDate').value:undefined;
+      Object.assign(t,recFields,reminderField);
+    }
   } else {
     const maxOrd=state.tasks.reduce((m,t)=>Math.max(m,t.order||0),-1);
-    state.tasks.push({id:uid(),title,points,assignee:selAssignee,type:selType,category:selCategory,days:selType==='recorrente'?[...selDays]:[],date:selType==='avulso'?document.getElementById('inputDate').value:undefined,order:maxOrd+1});
+    state.tasks.push({id:uid(),title,points,assignee:selAssignee,type:selType,category:selCategory,
+      days:selType==='recorrente'&&(selRecMode==='weekly'||selRecMode==='n_weeks')?[...selDays]:[],
+      date:selType==='avulso'?document.getElementById('inputDate').value:undefined,
+      order:maxOrd+1,...recFields,...reminderField});
   }
   saveState();closeTaskModal();renderManageBody();renderTab();
 }
@@ -2441,10 +2735,20 @@ document.getElementById('sabotageTaskTitle').addEventListener('keydown',e=>{if(e
 
 document.getElementById('assigneeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selAssignee=b.dataset.val;syncAssigneeUI();});
 document.getElementById('typeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selType=b.dataset.val;syncTypeUI();});
+document.getElementById('recModeGroup').addEventListener('click',e=>{const b=e.target.closest('.toggle-btn');if(!b)return;selRecMode=b.dataset.val;syncRecModeUI();});
+document.getElementById('reminderToggle').addEventListener('click',()=>{
+  selReminderEnabled=!selReminderEnabled;
+  if(selReminderEnabled && Notification?.permission==='default') Notification.requestPermission();
+  syncReminderUI();
+});
+document.getElementById('inputReminderTime').addEventListener('change',e=>{selReminderTime=e.target.value;});
+document.getElementById('alarmClose').addEventListener('click',dismissAlarm);
 
 buildDayToggles();
 try { localStorage.clear(); } catch(e) {} // remove dados locais antigos — servidor é a fonte de verdade
 loadState().then(() => renderApp());
+// Verifica lembretes a cada 30 segundos
+setInterval(checkReminders, 30000);
 </script>
 </body>
 </html>
