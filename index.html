@@ -260,6 +260,14 @@
     .level-bar-fill { height: 100%; border-radius: 20px; transition: width .5s ease; }
     .rank-card.alex .level-bar-fill { background: var(--alex); }
     .rank-card.ket  .level-bar-fill { background: var(--ket); }
+    .rank-badges { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin: 8px 0 4px; min-height: 22px; }
+    .rank-badge-chip {
+      font-size: .58rem; font-weight: 800; padding: 2px 6px; border-radius: 20px; border: 1px solid;
+      display: inline-flex; align-items: center; gap: 2px; line-height: 1.4;
+    }
+    .rank-badge-chip.bronze { background:rgba(176,141,87,.15); border-color:rgba(176,141,87,.45); color:#c8a96e; }
+    .rank-badge-chip.silver { background:rgba(160,160,160,.13); border-color:rgba(160,160,160,.45); color:#c0c0c0; }
+    .rank-badge-chip.gold   { background:rgba(255,215,0,.13); border-color:rgba(255,215,0,.45); color:var(--gold); }
     .rank-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .rank-stat { background: var(--surface2); border-radius: 8px; padding: 8px 6px; }
     .rank-stat-val   { font-size: 1.2rem; font-weight: 900; }
@@ -917,11 +925,11 @@ const ACH_TIERS = [
 
 const ACHIEVEMENTS = [
   {
-    id:'pts_total', emoji:'⚡', name:'Acumulador de Fótons',
-    desc:'Pontos totais acumulados no app',
+    id:'pts_total', emoji:'💲', name:'Acumulador de Moedas',
+    desc:'Total de moedas ganhas nas tarefas',
     thresholds:[500, 3000, 12000],
     getValue: (a) => ptsTotal(a),
-    formatVal: v => `${v} pts`,
+    formatVal: v => `${v} moedas`,
   },
   {
     id:'tasks_total', emoji:'✅', name:'Mão na Massa',
@@ -1041,6 +1049,20 @@ const ACHIEVEMENTS = [
     }).length,
     formatVal: v => `${v} tarefas`,
   },
+  {
+    id:'weekly_champ', emoji:'⭐', name:'Campeão Semanal',
+    desc:'Semanas em que você teve mais pontos que o parceiro',
+    thresholds:[3, 10, 30],
+    getValue: (a) => (state.weeklyPrizes||[]).filter(p=>p.winner===a).length,
+    formatVal: v => `${v} semana${v!==1?'s':''}`,
+  },
+  {
+    id:'monthly_champ', emoji:'👑', name:'Campeão Mensal',
+    desc:'Meses em que você girou a roleta mensal como vencedor',
+    thresholds:[1, 3, 12],
+    getValue: (a) => (state.spins||[]).filter(s=>s.type==='monthly'&&s.winner===a&&!s.isExtra).length,
+    formatVal: v => `${v} ${v===1?'mês':'meses'}`,
+  },
 ];
 
 const TASK_CATEGORIES = [
@@ -1101,7 +1123,7 @@ const MONTHLY_PRIZES = [
     desc:'Planejar juntos uma saída especial ou mini-viagem a dois' },
 ];
 
-const CURRENCY = { name: 'fótons', symbol: '⚡', singular: 'fóton' };
+const CURRENCY = { name: 'moedas', symbol: '💲', singular: 'moeda' };
 
 const DEFAULT_SHOP_ITEMS = [
   { id:'si_sabotage',  emoji:'💣', name:'Sabotagem Leve',          price:30,    desc:'Adicionar uma tarefa pro outro (ex: 10 polichinelos)',       special:'sabotage',           enabled:true },
@@ -1511,7 +1533,7 @@ function buyShopItem(itemId, assignee) {
   const item = (state.shopItems||[]).find(i=>i.id===itemId);
   if(!item) return;
   const bal = coinsBalance(assignee);
-  if(bal < item.price) { alert('Fótons insuficientes!'); return; }
+  if(bal < item.price) { alert('Moedas insuficientes!'); return; }
 
   if (item.special === 'sabotage') {
     if (state.sabotages.some(s => s.from === assignee && s.date === todayStr())) {
@@ -1595,7 +1617,7 @@ function confirmSabotage() {
     document.getElementById('modalSabotage').hidden = false; // keep open briefly
     const partnerName = target === 'alex' ? 'Alex' : 'Kétellyn';
     document.getElementById('modalSabotage').hidden = true;
-    alert(`🛡️ ${partnerName} tem um Escudo Anti-Sabotagem ativo!\n\nSua sabotagem foi bloqueada — mas os fótons foram debitados mesmo assim.`);
+    alert(`🛡️ ${partnerName} tem um Escudo Anti-Sabotagem ativo!\n\nSua sabotagem foi bloqueada — mas as moedas foram debitadas mesmo assim.`);
     renderTab(); return;
   }
 
@@ -2125,6 +2147,18 @@ function buildRankingTab() {
     ${buildValesSection()}`;
 }
 
+function buildRankBadges(assignee) {
+  const tierCls = ['bronze','silver','gold'];
+  const chips = ACHIEVEMENTS.map(a => {
+    const { level } = getAchLevel(a, assignee);
+    if(level === 0) return '';
+    const cls = tierCls[level-1];
+    const tierEmoji = level===3?'🥇':level===2?'🥈':'🥉';
+    return `<span class="rank-badge-chip ${cls}" title="${a.name} — ${ACH_TIERS[level-1].label}">${a.emoji}</span>`;
+  }).join('');
+  return chips ? `<div class="rank-badges">${chips}</div>` : '<div class="rank-badges"></div>';
+}
+
 function buildRankCard(assignee,name,emoji,total,done,wins) {
   const lv=getLevel(total), prog=getLevelProgress(total);
   const cls=assignee==='alex'?'alex':'ket';
@@ -2133,6 +2167,7 @@ function buildRankCard(assignee,name,emoji,total,done,wins) {
     <div class="rank-name">${name}</div>
     <div class="rank-level">${lv.emoji} ${lv.name}</div>
     <div class="level-bar-wrap"><div class="level-bar-fill" style="width:${prog}%"></div></div>
+    ${buildRankBadges(assignee)}
     <div class="rank-total">${total}</div>
     <div class="rank-total-label">⚡ pontos totais</div>
     <div class="rank-stats">
@@ -2411,7 +2446,7 @@ function buildShopTab() {
 
   const allPurchases = [...(state.purchases||[])].filter(p=>p.special!=='sabotage'&&p.special!=='shield').reverse();
   const histHtml = allPurchases.length===0
-    ? `<div class="empty-state" style="padding:16px">Nenhuma compra ainda — gaste seus fótons!</div>`
+    ? `<div class="empty-state" style="padding:16px">Nenhuma compra ainda — gaste suas moedas!</div>`
     : allPurchases.slice(0,20).map(p=>{
         const who = p.assignee==='alex'?'💙 Alex':'💗 Kétellyn';
         const date = new Date(p.at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
