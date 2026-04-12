@@ -98,6 +98,9 @@
     .task-item:hover { background: var(--surface2); }
     .task-item.completed { opacity: .42; }
     .task-item.completed .task-title { text-decoration: line-through; }
+    .task-skip-btn { flex-shrink: 0; background: none; border: none; cursor: pointer; font-size: .85rem; opacity: 0; padding: 4px 6px; border-radius: 6px; transition: opacity .15s, background .15s; line-height: 1; }
+    .task-item:hover .task-skip-btn { opacity: .45; }
+    .task-skip-btn:hover { opacity: 1 !important; background: rgba(239,83,80,.15); }
     .task-check { width: 32px; height: 32px; border-radius: 8px; border: 2px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: .95rem; transition: all .18s; }
     .person-col.alex .task-check         { border-color: var(--alex); color: white; }
     .person-col.alex .task-check.checked { background: var(--alex); border-color: var(--alex); }
@@ -415,7 +418,12 @@
     .alarm-sub { font-size: .75rem; color: var(--text-dim); margin-top: 2px; }
     .alarm-close { background: rgba(255,215,0,.15); border: 1px solid var(--gold); border-radius: 8px; color: var(--gold); font-family: inherit; font-weight: 800; font-size: .82rem; padding: 6px 14px; cursor: pointer; white-space:nowrap; flex-shrink:0; }
     .alarm-close:hover { background: rgba(255,215,0,.3); }
-    .manage-list { display: flex; flex-direction: column; gap: 8px; }
+    .manage-list { display: flex; flex-direction: column; gap: 6px; }
+    .manage-cat-header { display: flex; align-items: center; gap: 7px; padding: 8px 10px 4px; margin-top: 10px; border-left: 3px solid; border-radius: 0 var(--r-sm) var(--r-sm) 0; background: var(--surface); font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); }
+    .manage-cat-header:first-child { margin-top: 0; }
+    .manage-cat-icon { font-size: 1rem; }
+    .manage-cat-label { flex: 1; }
+    .manage-cat-count { background: var(--surface2); border-radius: 20px; padding: 1px 7px; font-size: .68rem; }
     .manage-task-item { display: flex; align-items: center; gap: 10px; background: var(--surface2); border-radius: var(--r-sm); border: 1px solid var(--border); padding: 11px 12px; transition: border-color .2s, background .2s; }
     .manage-task-item.dragging { opacity: .45; }
     .drag-handle { color: var(--text-dim); cursor: grab; font-size: 1.1rem; padding: 2px 4px; flex-shrink: 0; line-height: 1; }
@@ -512,6 +520,28 @@
     .shi-name  { font-weight: 700; }
     .shi-meta  { font-size: .68rem; color: var(--text-dim); margin-top: 1px; }
     .shi-price { font-weight: 800; font-size: .82rem; color: var(--red); white-space: nowrap; }
+    .shi-reward { background: rgba(255,215,0,.06); border-color: rgba(255,215,0,.2); }
+
+    /* ===== WEEKLY PRIZE CARD ===== */
+    .weekly-prize-card {
+      background: linear-gradient(135deg, rgba(255,215,0,.1), rgba(255,215,0,.04));
+      border: 1px solid rgba(255,215,0,.3);
+      border-radius: var(--r); padding: 18px; text-align: center;
+      margin-bottom: 6px; position: relative; overflow: hidden;
+    }
+    .wpc-badge {
+      display: inline-block; background: rgba(255,215,0,.2); color: var(--gold);
+      font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em;
+      padding: 3px 10px; border-radius: 50px; margin-bottom: 10px;
+    }
+    .wpc-emoji { font-size: 2rem; margin-bottom: 4px; }
+    .wpc-title { font-size: 1rem; font-weight: 900; color: var(--gold); }
+    .wpc-week  { font-size: .72rem; color: var(--text-dim); margin: 3px 0 6px; }
+    .wpc-winner { font-size: .85rem; font-weight: 800; margin-bottom: 4px; }
+    .wpc-winner.alex { color: var(--alex); }
+    .wpc-winner.ket  { color: var(--ket); }
+    .wpc-amount { font-size: 1.3rem; font-weight: 900; color: var(--gold); margin-bottom: 4px; }
+    .wpc-claimed { font-size: .82rem; color: var(--green); font-weight: 700; margin-top: 8px; }
 
     /* ===== PRIZE CONFIG ===== */
     .prize-config-link {
@@ -540,6 +570,61 @@
     .btn-sm-ghost:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
     .prizes-footer { display: flex; gap: 8px; margin-top: 14px; }
     .prizes-footer .add-task-btn { margin: 0; flex: 1; }
+
+    /* ===== CONQUISTAS ===== */
+    .conquistas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 460px) { .conquistas-grid { grid-template-columns: 1fr; } }
+    .conquistas-person { display: flex; flex-direction: column; gap: 10px; }
+    .conquistas-person-hdr {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-radius: var(--r);
+      font-size: .95rem; font-weight: 900;
+    }
+    .conquistas-person-hdr.alex { background: linear-gradient(135deg,rgba(79,195,247,.18),rgba(79,195,247,.04)); border: 1px solid rgba(79,195,247,.25); color: var(--alex); }
+    .conquistas-person-hdr.ket  { background: linear-gradient(135deg,rgba(244,143,177,.18),rgba(244,143,177,.04)); border: 1px solid rgba(244,143,177,.25); color: var(--ket); }
+    .conquistas-person-hdr .ach-avatar { font-size: 1.4rem; }
+    .conquistas-person-hdr .ach-sub { font-size: .7rem; font-weight: 700; opacity: .7; margin-top: 1px; }
+    .ach-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 13px 14px;
+      transition: border-color .2s;
+    }
+    .ach-card.unlocked-1 { border-color: rgba(176,141,87,.35); }
+    .ach-card.unlocked-2 { border-color: rgba(160,160,160,.4); }
+    .ach-card.unlocked-3 { border-color: rgba(255,215,0,.5); background: rgba(255,215,0,.025); }
+    .ach-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .ach-icon { font-size: 1.55rem; line-height: 1; flex-shrink: 0; }
+    .ach-info { flex: 1; min-width: 0; }
+    .ach-name { font-size: .82rem; font-weight: 900; }
+    .ach-desc { font-size: .66rem; color: var(--text-dim); margin-top: 1px; }
+    .ach-badge-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+    .ach-badge {
+      font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+      padding: 2px 7px; border-radius: 20px; border: 1px solid;
+    }
+    .ach-badge.locked   { background: transparent; border-color: rgba(255,255,255,.1); color: var(--text-dim); }
+    .ach-badge.bronze   { background: rgba(176,141,87,.18); border-color: rgba(176,141,87,.5); color: #c8a96e; }
+    .ach-badge.silver   { background: rgba(160,160,160,.15); border-color: rgba(160,160,160,.5); color: #c0c0c0; }
+    .ach-badge.gold     { background: rgba(255,215,0,.15); border-color: rgba(255,215,0,.5); color: var(--gold); }
+    .ach-progress-wrap  { margin-top: 8px; }
+    .ach-progress-label { display: flex; justify-content: space-between; font-size: .65rem; color: var(--text-dim); font-weight: 700; margin-bottom: 4px; }
+    .ach-progress-track { background: rgba(255,255,255,.06); border-radius: 20px; height: 5px; overflow: hidden; }
+    .ach-progress-fill  { height: 100%; border-radius: 20px; transition: width .5s ease; }
+    .ach-progress-fill.bronze { background: #c8a96e; }
+    .ach-progress-fill.silver { background: #c0c0c0; }
+    .ach-progress-fill.gold   { background: var(--gold); }
+    .ach-progress-fill.done   { background: var(--green); }
+    .ach-stats-bar { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .ach-stat { background: var(--surface2); border-radius: 7px; padding: 6px 10px; font-size: .7rem; font-weight: 800; flex: 1; min-width: 60px; text-align: center; }
+    .conquistas-summary {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 14px 16px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .cs-item { text-align: center; }
+    .cs-val  { font-size: 1.4rem; font-weight: 900; }
+    .cs-lbl  { font-size: .65rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-top: 2px; }
+    .cs-item.alex .cs-val { color: var(--alex); }
+    .cs-item.ket  .cs-val { color: var(--ket); }
 
     /* ===== MISC ===== */
     .point-popup { position: fixed; pointer-events: none; z-index: 999; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.05rem; animation: ptFloat .85s ease forwards; }
@@ -572,6 +657,7 @@
   <button class="tab-btn" data-tab="mes">📆 Mês</button>
   <button class="tab-btn" data-tab="ranking">🏆 Ranking</button>
   <button class="tab-btn" data-tab="loja">🛒 Loja</button>
+  <button class="tab-btn" data-tab="conquistas">🏅 Conquistas</button>
 </nav>
 
 <main class="content" id="mainContent"></main>
@@ -731,7 +817,7 @@
           <input class="form-input" id="si_emoji" type="text" maxlength="4" placeholder="🎁" style="text-align:center;font-size:1.3rem;padding:8px;"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Preço (⚡ fótons)</label>
+          <label class="form-label">Preço (💲 moedas)</label>
           <input class="form-input" id="si_price" type="number" min="1" max="99999" placeholder="100"/>
         </div>
       </div>
@@ -815,12 +901,146 @@ const DAY_SHORT  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const DAY_FULL   = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 const MONTHS     = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const LEVELS     = [
-  { min: 0,    emoji: '🌱', name: 'Calouro',     next: 100  },
-  { min: 100,  emoji: '⭐', name: 'Aventureiro', next: 300  },
-  { min: 300,  emoji: '⚔️', name: 'Guerreiro',   next: 600  },
-  { min: 600,  emoji: '🦸', name: 'Herói',       next: 1000 },
-  { min: 1000, emoji: '👑', name: 'Lenda',       next: 2000 },
-  { min: 2000, emoji: '🚀', name: 'Foguete',     next: null },
+  { min: 0,     emoji: '🌱', name: 'Calouro',     next: 500   },
+  { min: 500,   emoji: '⭐', name: 'Aventureiro', next: 1500  },
+  { min: 1500,  emoji: '⚔️', name: 'Guerreiro',   next: 4000  },
+  { min: 4000,  emoji: '🦸', name: 'Herói',       next: 9000  },
+  { min: 9000,  emoji: '👑', name: 'Lenda',       next: 20000 },
+  { min: 20000, emoji: '🚀', name: 'Foguete',     next: null  },
+];
+
+const ACH_TIERS = [
+  { id:'bronze', emoji:'🥉', label:'Bronze', cls:'bronze' },
+  { id:'silver', emoji:'🥈', label:'Prata',  cls:'silver' },
+  { id:'gold',   emoji:'🥇', label:'Ouro',   cls:'gold'   },
+];
+
+const ACHIEVEMENTS = [
+  {
+    id:'pts_total', emoji:'⚡', name:'Acumulador de Fótons',
+    desc:'Pontos totais acumulados no app',
+    thresholds:[500, 3000, 12000],
+    getValue: (a) => ptsTotal(a),
+    formatVal: v => `${v} pts`,
+  },
+  {
+    id:'tasks_total', emoji:'✅', name:'Mão na Massa',
+    desc:'Total de tarefas concluídas',
+    thresholds:[50, 300, 1000],
+    getValue: (a) => state.completions.filter(c=>c.assignee===a).length,
+    formatVal: v => `${v} tarefas`,
+  },
+  {
+    id:'days_won', emoji:'🏆', name:'Campeão do Dia',
+    desc:'Dias em que você fez mais pontos que o parceiro',
+    thresholds:[5, 30, 100],
+    getValue: (a) => {
+      const allDates=[...new Set(state.completions.map(c=>c.date))];
+      return daysWon(a, allDates);
+    },
+    formatVal: v => `${v} dias`,
+  },
+  {
+    id:'streak', emoji:'🔥', name:'Sequência Imparável',
+    desc:'Maior sequência de dias consecutivos com tarefas',
+    thresholds:[5, 15, 30],
+    getValue: (a) => {
+      const dates=[...new Set(state.completions.filter(c=>c.assignee===a).map(c=>c.date))].sort();
+      if(dates.length===0) return 0;
+      let max=1,cur=1;
+      for(let i=1;i<dates.length;i++){
+        const prev=fromStr(dates[i-1]),curr=fromStr(dates[i]);
+        const diff=Math.round((curr-prev)/86400000);
+        if(diff===1){cur++;max=Math.max(max,cur);}else cur=1;
+      }
+      return max;
+    },
+    formatVal: v => `${v} dias`,
+  },
+  {
+    id:'cat_alimentacao', emoji:'🍽️', name:'Chef Estrelado',
+    desc:'Tarefas de alimentação concluídas',
+    thresholds:[20, 100, 400],
+    getValue: (a) => state.completions.filter(c=>{
+      if(c.assignee!==a) return false;
+      const t=state.tasks.find(x=>x.id===c.taskId);
+      return t&&t.category==='alimentacao';
+    }).length,
+    formatVal: v => `${v} tarefas`,
+  },
+  {
+    id:'cat_limpeza', emoji:'🧹', name:'Faxineiro de Ouro',
+    desc:'Tarefas de limpeza concluídas',
+    thresholds:[30, 150, 500],
+    getValue: (a) => state.completions.filter(c=>{
+      if(c.assignee!==a) return false;
+      const t=state.tasks.find(x=>x.id===c.taskId);
+      return t&&t.category==='limpeza';
+    }).length,
+    formatVal: v => `${v} tarefas`,
+  },
+  {
+    id:'cat_saude', emoji:'💪', name:'Corpo em Forma',
+    desc:'Tarefas de saúde concluídas',
+    thresholds:[25, 120, 400],
+    getValue: (a) => state.completions.filter(c=>{
+      if(c.assignee!==a) return false;
+      const t=state.tasks.find(x=>x.id===c.taskId);
+      return t&&t.category==='saude';
+    }).length,
+    formatVal: v => `${v} tarefas`,
+  },
+  {
+    id:'cat_espiritual', emoji:'🙏', name:'Alma Elevada',
+    desc:'Tarefas espirituais concluídas',
+    thresholds:[15, 75, 250],
+    getValue: (a) => state.completions.filter(c=>{
+      if(c.assignee!==a) return false;
+      const t=state.tasks.find(x=>x.id===c.taskId);
+      return t&&t.category==='espiritual';
+    }).length,
+    formatVal: v => `${v} tarefas`,
+  },
+  {
+    id:'cat_compromissos', emoji:'📋', name:'Comprometido',
+    desc:'Tarefas de compromissos concluídas',
+    thresholds:[25, 120, 400],
+    getValue: (a) => state.completions.filter(c=>{
+      if(c.assignee!==a) return false;
+      const t=state.tasks.find(x=>x.id===c.taskId);
+      return t&&t.category==='compromissos';
+    }).length,
+    formatVal: v => `${v} tarefas`,
+  },
+  {
+    id:'cat_financeiro', emoji:'💰', name:'Poupador',
+    desc:'Tarefas financeiras concluídas',
+    thresholds:[8, 40, 150],
+    getValue: (a) => state.completions.filter(c=>{
+      if(c.assignee!==a) return false;
+      const t=state.tasks.find(x=>x.id===c.taskId);
+      return t&&t.category==='financeiro';
+    }).length,
+    formatVal: v => `${v} tarefas`,
+  },
+  {
+    id:'purchases', emoji:'🛒', name:'Consumidor VIP',
+    desc:'Compras realizadas na loja',
+    thresholds:[3, 15, 50],
+    getValue: (a) => (state.purchases||[]).filter(p=>p.assignee===a&&p.special!=='weekly_prize').length,
+    formatVal: v => `${v} compras`,
+  },
+  {
+    id:'parceiro', emoji:'🤝', name:'Parceiro Perfeito',
+    desc:'Tarefas "Ambos" que você concluiu',
+    thresholds:[30, 150, 500],
+    getValue: (a) => state.completions.filter(c=>{
+      if(c.assignee!==a) return false;
+      const t=state.tasks.find(x=>x.id===c.taskId);
+      return t&&t.assignee==='ambos';
+    }).length,
+    formatVal: v => `${v} tarefas`,
+  },
 ];
 
 const TASK_CATEGORIES = [
@@ -928,7 +1148,8 @@ function defaultState() {
     extraSpins: [],
     customCategories: [],
     sabotages: [],
-    shields: []
+    shields: [],
+    weeklyPrizes: []
   };
 }
 
@@ -945,8 +1166,12 @@ function _migrateState() {
   if (!state.purchases)  state.purchases  = [];
   if (!state.extraSpins)       state.extraSpins = [];
   if (!state.customCategories) state.customCategories = [];
-  if (!state.sabotages) state.sabotages = [];
-  if (!state.shields)   state.shields   = [];
+  if (!state.sabotages)    state.sabotages    = [];
+  if (!state.shields)      state.shields      = [];
+  if (!state.weeklyPrizes) state.weeklyPrizes = [];
+  if (!state.skips)        state.skips        = [];
+  // Migração: Ketellyn ganhou a semana anterior à implantação do sistema
+  _seedWeeklyPrize();
   // Garante categoria em todas as tarefas existentes
   state.tasks.forEach(t => { if (!t.category) t.category = 'outros'; });
   // Auto-detecta itens de sabotagem/escudo pelo nome (para itens criados antes deste recurso)
@@ -972,6 +1197,87 @@ function _migrateState() {
   // Remove tarefas de sabotagem de dias passados
   const pastSabTaskIds = new Set(state.sabotages.filter(s => s.date < _today && s.taskId).map(s => s.taskId));
   state.tasks = state.tasks.filter(t => !pastSabTaskIds.has(t.id));
+}
+
+function _seedWeeklyPrize() {
+  // Ketellyn ganhou a semana anterior à implantação — adiciona o prêmio uma única vez
+  const seedKey = 'seed_ket_win_week1';
+  if (state.weeklyPrizes.some(p => p.id === seedKey)) return;
+  // Calcula a semana passada
+  const lastWeekDate = new Date(); lastWeekDate.setDate(lastWeekDate.getDate() - 7);
+  const lastWeekKey = getWeekKey(toStr(lastWeekDate));
+  state.weeklyPrizes.push({ id: seedKey, weekKey: lastWeekKey, winner: 'ketellyn', claimed: false, claimedAt: null });
+}
+
+// ======================== WEEKLY PRIZE HELPERS ========================
+const WEEKLY_PRIZE_AMOUNT = 200;
+
+function getWeeklyPrizeRecord(weekKey) {
+  return (state.weeklyPrizes||[]).find(p => p.weekKey === weekKey) || null;
+}
+
+function getLastWeekKey() {
+  const d = new Date(); d.setDate(d.getDate() - 7);
+  return getWeekKey(toStr(d));
+}
+
+function getWeekWinner(weekKey) {
+  const days = getWeekDays(weekKey.replace('week_',''));
+  const today = todayStr();
+  const pastDays = days.filter(d => d <= today);
+  if (!pastDays.length) return null;
+  const apts = pastDays.reduce((s,d)=>s+ptsForDate('alex',d),0);
+  const kpts = pastDays.reduce((s,d)=>s+ptsForDate('ketellyn',d),0);
+  if (apts === kpts || (apts===0&&kpts===0)) return null;
+  return apts > kpts ? 'alex' : 'ketellyn';
+}
+
+// Retorna o saldo de prêmios semanais do assignee (já resgatados)
+function weeklyPrizeBalance(assignee) {
+  return (state.weeklyPrizes||[]).filter(p => p.claimed && p.winner === assignee).length * WEEKLY_PRIZE_AMOUNT;
+}
+
+// Moedas spendable = tarefas + prêmios semanais resgatados - compras
+function coinsBalanceFull(assignee) {
+  return Math.max(0, coinsEarned(assignee) + weeklyPrizeBalance(assignee) - coinsSpent(assignee));
+}
+
+// Estrelas do mês atual (vitórias semanais resgatadas ou pendentes no mês)
+function weeklyStarsThisMonth(assignee) {
+  const now = new Date();
+  const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  return (state.weeklyPrizes||[]).filter(p => {
+    if (p.winner !== assignee) return false;
+    // A semana pertence ao mês se o domingo final da semana estiver no mês
+    const days = getWeekDays(p.weekKey.replace('week_',''));
+    const sunday = days[6]; // último dia da semana
+    return sunday.startsWith(ym);
+  }).length;
+}
+
+function claimWeeklyPrize(weekKey, assignee) {
+  let rec = getWeeklyPrizeRecord(weekKey);
+  if (!rec) {
+    rec = { id: uid(), weekKey, winner: assignee, claimed: false, claimedAt: null };
+    state.weeklyPrizes.push(rec);
+  }
+  if (rec.claimed) return;
+  if (rec.winner !== assignee) return;
+  rec.claimed = true;
+  rec.claimedAt = Date.now();
+  // Registra no histórico de compras como "crédito" (preço negativo indica ganho)
+  state.purchases.push({
+    id: uid(), itemId: 'weekly_prize', assignee,
+    emoji: '🏆', name: 'Prêmio Semanal',
+    price: -WEEKLY_PRIZE_AMOUNT, // negativo = recebeu, não gastou
+    special: 'weekly_prize', weekKey, at: Date.now()
+  });
+  saveState(); renderTab();
+  const pop = document.createElement('div');
+  pop.className = 'point-popup';
+  pop.style.cssText = `left:50%;top:80px;transform:translateX(-50%);color:var(--gold);text-shadow:0 0 12px rgba(255,215,0,.5);font-size:1.05rem;white-space:nowrap;`;
+  pop.textContent = `🏆 +${WEEKLY_PRIZE_AMOUNT}💲 Prêmio Semanal!`;
+  document.body.appendChild(pop); setTimeout(()=>pop.remove(),1800);
 }
 
 // Timeout compatível com Android antigo (sem AbortSignal.timeout)
@@ -1146,10 +1452,15 @@ function taskActiveOnDate(t, dateStr) {
   return false;
 }
 
+function isSkipped(taskId, assignee, dateStr) {
+  return (state.skips||[]).some(s=>s.taskId===taskId&&s.assignee===assignee&&s.date===dateStr);
+}
+
 function getTasksForDay(dateStr, assignee) {
   return state.tasks
     .filter(t=>{
       if(t.assignee!==assignee && t.assignee!=='ambos') return false;
+      if(isSkipped(t.id, assignee, dateStr)) return false;
       return taskActiveOnDate(t, dateStr);
     })
     .sort((a,b)=>(a.order||0)-(b.order||0));
@@ -1187,8 +1498,8 @@ function ptsTotal(assignee) {
 function tasksDone(assignee)  { return state.completions.filter(c=>c.assignee===assignee).length; }
 
 function coinsEarned(assignee)  { return state.completions.filter(c=>c.assignee===assignee).reduce((s,c)=>s+(c.points||0),0); }
-function coinsSpent(assignee)   { return (state.purchases||[]).filter(p=>p.assignee===assignee).reduce((s,p)=>s+(p.price||0),0); }
-function coinsBalance(assignee) { return Math.max(0, coinsEarned(assignee) - coinsSpent(assignee)); }
+function coinsSpent(assignee)   { return (state.purchases||[]).filter(p=>p.assignee===assignee&&p.special!=='weekly_prize').reduce((s,p)=>s+(p.price||0),0); }
+function coinsBalance(assignee) { return Math.max(0, coinsEarned(assignee) + weeklyPrizeBalance(assignee) - coinsSpent(assignee)); }
 
 function hasExtraSpinToken(type) { return (state.extraSpins||[]).some(t=>t.type==='extra_spin_'+type&&!t.used); }
 function consumeExtraSpinToken(type) {
@@ -1219,7 +1530,7 @@ function buyShopItem(itemId, assignee) {
     const pop=document.createElement('div');
     pop.className='point-popup';
     pop.style.cssText=`left:50%;top:80px;transform:translateX(-50%);color:var(--green);text-shadow:0 0 12px rgba(105,240,174,.5);font-size:1.05rem;white-space:nowrap;`;
-    pop.textContent=`🛡️ Escudo ativado! -${item.price}⚡`;
+    pop.textContent=`🛡️ Escudo ativado! -${item.price}💲`;
     document.body.appendChild(pop); setTimeout(()=>pop.remove(),1600);
     return;
   }
@@ -1231,7 +1542,7 @@ function buyShopItem(itemId, assignee) {
   const pop=document.createElement('div');
   pop.className='point-popup';
   pop.style.cssText=`left:50%;top:80px;transform:translateX(-50%);color:var(--gold);text-shadow:0 0 12px rgba(255,215,0,.5);font-size:1.05rem;white-space:nowrap;`;
-  pop.textContent=`${item.emoji} Comprado! -${item.price}⚡`;
+  pop.textContent=`${item.emoji} Comprado! -${item.price}💲`;
   document.body.appendChild(pop); setTimeout(()=>pop.remove(),1400);
 }
 function daysWon(assignee,dates) {
@@ -1306,7 +1617,7 @@ function confirmSabotage() {
   const pop = document.createElement('div');
   pop.className = 'point-popup';
   pop.style.cssText = `left:50%;top:80px;transform:translateX(-50%);color:var(--red);text-shadow:0 0 12px rgba(239,83,80,.6);font-size:1rem;white-space:nowrap;`;
-  pop.textContent = `💣 Sabotagem enviada para ${partnerName}! -${item.price}⚡`;
+  pop.textContent = `💣 Sabotagem enviada para ${partnerName}! -${item.price}💲`;
   document.body.appendChild(pop); setTimeout(() => pop.remove(), 1800);
   renderTab();
 }
@@ -1489,6 +1800,7 @@ function renderTab() {
   else if(currentTab==='mes')     el.innerHTML=buildMonthTab();
   else if(currentTab==='ranking') el.innerHTML=buildRankingTab();
   else if(currentTab==='loja')    el.innerHTML=buildShopTab();
+  else if(currentTab==='conquistas') el.innerHTML=buildConquistasTab();
   bindTabEvents();
 }
 
@@ -1555,6 +1867,7 @@ function buildPersonCol(assignee,name,emoji,dateStr) {
             <div class="task-title">${esc(t.title)}</div>
             <div class="task-pts">⚡ ${t.points} pts</div>
           </div>
+          <button class="task-skip-btn" data-task="${t.id}" data-who="${assignee}" data-date="${dateStr}" title="Remover do dia">🗑️</button>
         </div>`;
       }).join('');
     });
@@ -1564,7 +1877,7 @@ function buildPersonCol(assignee,name,emoji,dateStr) {
     <div class="person-header ${cls}">
       <div class="person-avatar">${emoji}</div>
       <div>
-        <div class="person-name">${name}</div>
+        <div class="person-name">${name}${(()=>{const s=weeklyStarsThisMonth(assignee);return s>0?` <span style="font-size:.85rem;letter-spacing:-.05em">${'⭐'.repeat(s)}</span>`:''})()}</div>
         <div class="person-sub">${done}/${tasks.length} tarefas · até ${possible}⚡</div>
       </div>
     </div>
@@ -1940,11 +2253,158 @@ function buildValeCard(vale, isActive) {
   </div>`;
 }
 
+// ======================== CONQUISTAS TAB ========================
+function getAchLevel(ach, assignee) {
+  const val = ach.getValue(assignee);
+  let level = 0;
+  ach.thresholds.forEach((t,i) => { if(val>=t) level=i+1; });
+  return { level, val };
+}
+
+function buildAchCard(ach, assignee) {
+  const { level, val } = getAchLevel(ach, assignee);
+  const tiers = ACH_TIERS;
+  const nextTierIdx = level < 3 ? level : null; // index of next tier (0-based)
+  const nextThreshold = nextTierIdx !== null ? ach.thresholds[nextTierIdx] : null;
+  const prevThreshold = nextTierIdx > 0 ? ach.thresholds[nextTierIdx-1] : 0;
+  const pct = nextThreshold !== null
+    ? Math.min(100, Math.round(((val - prevThreshold) / (nextThreshold - prevThreshold)) * 100))
+    : 100;
+  const tierCls = level===3 ? 'gold' : level===2 ? 'silver' : level===1 ? 'bronze' : '';
+  const cardCls = level > 0 ? `unlocked-${level}` : '';
+  const progressCls = level===3 ? 'done' : tierCls || 'bronze';
+
+  const badges = tiers.map((t,i) => {
+    const unlocked = level > i;
+    const isCurrent = level === i+1;
+    const cls = unlocked ? t.cls : 'locked';
+    return `<span class="ach-badge ${cls}" title="${t.label}: ${ach.thresholds[i]} ${ach.formatVal(ach.thresholds[i])}">${t.emoji} ${t.label}</span>`;
+  }).join('');
+
+  const progressHtml = `
+    <div class="ach-progress-wrap">
+      <div class="ach-progress-label">
+        <span>${ach.formatVal(val)}</span>
+        <span>${nextThreshold ? ach.formatVal(nextThreshold) : '✓ Máximo'}</span>
+      </div>
+      <div class="ach-progress-track">
+        <div class="ach-progress-fill ${progressCls}" style="width:${pct}%"></div>
+      </div>
+    </div>`;
+
+  return `<div class="ach-card ${cardCls}">
+    <div class="ach-top">
+      <div class="ach-icon">${ach.emoji}</div>
+      <div class="ach-info">
+        <div class="ach-name">${ach.name}</div>
+        <div class="ach-desc">${ach.desc}</div>
+        <div class="ach-badge-row">${badges}</div>
+      </div>
+    </div>
+    ${progressHtml}
+  </div>`;
+}
+
+function buildConquistasPersonCol(assignee, name, emoji) {
+  const cls = assignee === 'alex' ? 'alex' : 'ket';
+  const totalUnlocked = ACHIEVEMENTS.reduce((s,a) => s + getAchLevel(a, assignee).level, 0);
+  const maxPossible = ACHIEVEMENTS.length * 3;
+
+  const cards = ACHIEVEMENTS.map(a => buildAchCard(a, assignee)).join('');
+
+  return `<div class="conquistas-person">
+    <div class="conquistas-person-hdr ${cls}">
+      <span class="ach-avatar">${emoji}</span>
+      <div>
+        <div>${name}</div>
+        <div class="ach-sub">${totalUnlocked} / ${maxPossible} selos desbloqueados</div>
+      </div>
+    </div>
+    ${cards}
+  </div>`;
+}
+
+function buildConquistasTab() {
+  const alexTotal = ACHIEVEMENTS.reduce((s,a) => s + getAchLevel(a,'alex').level, 0);
+  const ketTotal  = ACHIEVEMENTS.reduce((s,a) => s + getAchLevel(a,'ketellyn').level, 0);
+  const alexGold  = ACHIEVEMENTS.filter(a => getAchLevel(a,'alex').level===3).length;
+  const ketGold   = ACHIEVEMENTS.filter(a => getAchLevel(a,'ketellyn').level===3).length;
+
+  return `
+    <div class="conquistas-summary">
+      <div class="cs-item alex">
+        <div class="cs-val">${alexTotal}</div>
+        <div class="cs-lbl">💙 Alex — Selos</div>
+      </div>
+      <div class="cs-item ket">
+        <div class="cs-val">${ketTotal}</div>
+        <div class="cs-lbl">💗 Kétellyn — Selos</div>
+      </div>
+      <div class="cs-item alex">
+        <div class="cs-val" style="color:var(--gold)">${alexGold}</div>
+        <div class="cs-lbl">🥇 Ouros — Alex</div>
+      </div>
+      <div class="cs-item ket">
+        <div class="cs-val" style="color:var(--gold)">${ketGold}</div>
+        <div class="cs-lbl">🥇 Ouros — Kétellyn</div>
+      </div>
+    </div>
+    <div class="conquistas-grid">
+      ${buildConquistasPersonCol('alex','Alex','🚀')}
+      ${buildConquistasPersonCol('ketellyn','Kétellyn','💫')}
+    </div>`;
+}
+
 // ======================== SHOP TAB ========================
+function buildWeeklyPrizeCard() {
+  const lastWeekKey = getLastWeekKey();
+  const currentWeekKey = getWeekKey(todayStr());
+
+  // Detecta o vencedor da semana passada (ou usa o salvo)
+  let rec = getWeeklyPrizeRecord(lastWeekKey);
+  if (!rec) {
+    const w = getWeekWinner(lastWeekKey);
+    if (!w) return ''; // empate ou semana sem dados
+    rec = { id: null, weekKey: lastWeekKey, winner: w, claimed: false, claimedAt: null };
+    // Persiste se ainda não existe
+    state.weeklyPrizes.push({ id: uid(), weekKey: lastWeekKey, winner: w, claimed: false, claimedAt: null });
+  }
+
+  const winnerName = rec.winner === 'alex' ? '💙 Alex' : '💗 Kétellyn';
+  const winnerCls  = rec.winner === 'alex' ? 'alex' : 'ket';
+  const ab = coinsBalance('alex'), kb = coinsBalance('ketellyn');
+  const alexCan = !rec.claimed && rec.winner === 'alex';
+  const ketCan  = !rec.claimed && rec.winner === 'ketellyn';
+
+  const days = getWeekDays(lastWeekKey.replace('week_',''));
+  const weekLabel = `${new Date(days[0]+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} – ${new Date(days[6]+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}`;
+
+  return `<div class="weekly-prize-card">
+    <div class="wpc-badge">🏆 Prêmio Semanal</div>
+    <div class="wpc-emoji">🏆</div>
+    <div class="wpc-title">Prêmio da Semana</div>
+    <div class="wpc-week">${weekLabel}</div>
+    <div class="wpc-winner ${winnerCls}">Vencedor: ${winnerName}</div>
+    <div class="wpc-amount">${WEEKLY_PRIZE_AMOUNT} 💲</div>
+    ${rec.claimed
+      ? `<div class="wpc-claimed">✅ Resgatado</div>`
+      : `<div class="sic-buy-row" style="margin-top:10px">
+          <button class="sic-buy-btn alex" data-weekly-prize="${lastWeekKey}" data-who="alex" ${!alexCan?'disabled':''}>
+            💙 ${rec.winner==='alex'?'Resgatar':'Não é o vencedor'}
+          </button>
+          <button class="sic-buy-btn ket" data-weekly-prize="${lastWeekKey}" data-who="ketellyn" ${!ketCan?'disabled':''}>
+            💗 ${rec.winner==='ketellyn'?'Resgatar':'Não é o vencedor'}
+          </button>
+        </div>`
+    }
+  </div>`;
+}
+
 function buildShopTab() {
   const ab = coinsBalance('alex'), kb = coinsBalance('ketellyn');
   const items = (state.shopItems||[]).filter(i=>i.enabled!==false).sort((a,b)=>(a.price||0)-(b.price||0));
 
+  const weeklyCard = buildWeeklyPrizeCard();
   const grid = items.length
     ? items.map(item=>buildShopItemCard(item,ab,kb)).join('')
     : `<div class="empty-state" style="padding:20px;grid-column:1/-1">Nenhum item disponível.</div>`;
@@ -1952,16 +2412,20 @@ function buildShopTab() {
   const allPurchases = [...(state.purchases||[])].filter(p=>p.special!=='sabotage'&&p.special!=='shield').reverse();
   const histHtml = allPurchases.length===0
     ? `<div class="empty-state" style="padding:16px">Nenhuma compra ainda — gaste seus fótons!</div>`
-    : allPurchases.slice(0,15).map(p=>{
-        const who=p.assignee==='alex'?'💙 Alex':'💗 Kétellyn';
-        const date=new Date(p.at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-        return `<div class="shop-history-item">
+    : allPurchases.slice(0,20).map(p=>{
+        const who = p.assignee==='alex'?'💙 Alex':'💗 Kétellyn';
+        const date = new Date(p.at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+        const isReward = p.special==='weekly_prize';
+        const priceHtml = isReward
+          ? `<div class="shi-price" style="color:var(--gold)">+${WEEKLY_PRIZE_AMOUNT}💲</div>`
+          : `<div class="shi-price">-${p.price}💲</div>`;
+        return `<div class="shop-history-item ${isReward?'shi-reward':''}">
           <div class="shi-emoji">${p.emoji}</div>
           <div class="shi-info">
             <div class="shi-name">${esc(p.name)}</div>
             <div class="shi-meta">${who} · ${date}</div>
           </div>
-          <div class="shi-price">-${p.price}⚡</div>
+          ${priceHtml}
         </div>`;
       }).join('');
 
@@ -1969,16 +2433,17 @@ function buildShopTab() {
     <div class="shop-balances">
       <div class="shop-balance-card alex">
         <div class="sbc-name">💙 Alex</div>
-        <div class="sbc-balance">${ab}<span style="font-size:.9rem;opacity:.7">⚡</span></div>
-        <div class="sbc-sub">${coinsEarned('alex')} ganhos · ${coinsSpent('alex')} gastos</div>
+        <div class="sbc-balance">${ab}<span style="font-size:.9rem;opacity:.7">💲</span></div>
+        <div class="sbc-sub">${coinsEarned('alex')} tarefas · ${weeklyPrizeBalance('alex')} prêmios · ${coinsSpent('alex')} gastos</div>
       </div>
       <div class="shop-balance-card ket">
         <div class="sbc-name">💗 Kétellyn</div>
-        <div class="sbc-balance">${kb}<span style="font-size:.9rem;opacity:.7">⚡</span></div>
-        <div class="sbc-sub">${coinsEarned('ketellyn')} ganhos · ${coinsSpent('ketellyn')} gastos</div>
+        <div class="sbc-balance">${kb}<span style="font-size:.9rem;opacity:.7">💲</span></div>
+        <div class="sbc-sub">${coinsEarned('ketellyn')} tarefas · ${weeklyPrizeBalance('ketellyn')} prêmios · ${coinsSpent('ketellyn')} gastos</div>
       </div>
     </div>
-    <div class="shop-section-hdr">
+    ${weeklyCard ? `<div class="shop-section-hdr" style="margin-bottom:10px"><h3>🏆 Prêmio da Semana</h3></div>${weeklyCard}` : ''}
+    <div class="shop-section-hdr" style="margin-top:20px">
       <h3>🛒 Itens da Loja</h3>
       <button class="shop-manage-btn" id="btnShopManage">⚙️ Gerenciar</button>
     </div>
@@ -2004,8 +2469,8 @@ function buildShopItemCard(item, alexBal, ketBal) {
   const ketBlocked   = ketSabUsed||ketShieldHas;
   const alexCan = alexBal >= item.price && !alexBlocked;
   const ketCan  = ketBal  >= item.price && !ketBlocked;
-  const alexLabel = alexBlocked?'Usado hoje':alexBal>=item.price?'Comprar':'Sem ⚡';
-  const ketLabel  = ketBlocked ?'Usado hoje':ketBal >=item.price?'Comprar':'Sem ⚡';
+  const alexLabel = alexBlocked?'Usado hoje':alexBal>=item.price?'Comprar':'Sem 💲';
+  const ketLabel  = ketBlocked ?'Usado hoje':ketBal >=item.price?'Comprar':'Sem 💲';
   const specialBadge = isSpecial ? `<div class="sic-special-badge">${
     item.special==='extra_spin_weekly'?'🎡 +Giro Semanal':
     item.special==='extra_spin_monthly'?'🎰 +Giro Mensal':
@@ -2016,7 +2481,7 @@ function buildShopItemCard(item, alexBal, ketBal) {
     <div class="sic-emoji">${item.emoji}</div>
     <div class="sic-name">${esc(item.name)}</div>
     <div class="sic-desc">${esc(item.desc)}</div>
-    <div class="sic-price">${item.price} ⚡</div>
+    <div class="sic-price">${item.price} 💲</div>
     <div class="sic-buy-row">
       <button class="sic-buy-btn alex" data-item="${item.id}" data-who="alex" ${!alexCan?'disabled':''}>
         💙 ${alexLabel}
@@ -2158,7 +2623,7 @@ function renderShopManageBody() {
     const dis = item.enabled===false;
     return `<div class="manage-task-item" style="${dis?'opacity:.45':''}">
       <div class="manage-task-info">
-        <div class="manage-task-title">${item.emoji} ${esc(item.name)} · ${item.price}⚡</div>
+        <div class="manage-task-title">${item.emoji} ${esc(item.name)} · ${item.price}💲</div>
         <div class="manage-task-meta">
           ${item.special?`<span class="badge badge-rec">${
             item.special==='extra_spin_weekly'?'🎡 Giro Semanal':
@@ -2271,6 +2736,10 @@ function _startSabTimers() {
 function bindTabEvents() {
   if(currentTab==='dia') {
     document.querySelectorAll('.task-item').forEach(el=>el.addEventListener('click',onTaskClick));
+    document.querySelectorAll('.task-skip-btn').forEach(btn=>btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      skipTask(btn.dataset.task, btn.dataset.who, btn.dataset.date);
+    }));
     _startSabTimers();
   } else {
     if(_sabTimerInterval){clearInterval(_sabTimerInterval);_sabTimerInterval=null;}
@@ -2313,7 +2782,10 @@ function bindTabEvents() {
   }
   if(currentTab==='loja') {
     document.getElementById('btnShopManage')?.addEventListener('click',openShopManageModal);
-    document.querySelectorAll('.sic-buy-btn').forEach(b=>b.addEventListener('click',()=>buyShopItem(b.dataset.item,b.dataset.who)));
+    document.querySelectorAll('.sic-buy-btn').forEach(b=>b.addEventListener('click',()=>{
+      if(b.dataset.weeklyPrize) claimWeeklyPrize(b.dataset.weeklyPrize, b.dataset.who);
+      else buyShopItem(b.dataset.item, b.dataset.who);
+    }));
   }
 }
 
@@ -2343,37 +2815,56 @@ function openManageModal() { renderManageBody(); document.getElementById('modalM
 
 function renderManageBody() {
   const sorted=[...state.tasks].sort((a,b)=>(a.order||0)-(b.order||0));
-  const listHtml=sorted.map((t,i)=>{
-    const ab=t.assignee==='alex'?'badge-alex':t.assignee==='ketellyn'?'badge-ket':'badge-ambos';
-    const al=t.assignee==='alex'?'💙 Alex':t.assignee==='ketellyn'?'💗 Kétellyn':'🤝 Ambos';
-    const dayLabel=(()=>{
-      if(t.type!=='recorrente') return t.date?`<span class="badge badge-ambos">${t.date}</span>`:'';
-      const mode=t.recurrenceMode||'weekly';
-      if(mode==='weekly') return t.days.length>0?`<span class="badge badge-ambos">${t.days.map(d=>DAY_SHORT[d]).join(', ')}</span>`:`<span class="badge badge-ambos">Todos os dias</span>`;
-      if(mode==='n_days') return `<span class="badge badge-ambos">A cada ${t.intervalDays||2} dias</span>`;
-      if(mode==='n_weeks') return `<span class="badge badge-ambos">A cada ${t.intervalWeeks||2} semanas${t.days.length>0?' ('+t.days.map(d=>DAY_SHORT[d]).join(', ')+')'  :''}</span>`;
-      if(mode==='monthly_day') return `<span class="badge badge-ambos">Dia ${t.monthDay||1} do m\xEAs</span>`;
-      if(mode==='12x36') return `<span class="badge badge-ambos">12x36</span>`;
-      return '';
-    })();
-    return `<div class="manage-task-item" draggable="true" data-idx="${i}" data-tid="${t.id}">
-      <div class="drag-handle">⠿</div>
-      <div class="manage-task-info">
-        <div class="manage-task-title">${esc(t.title)} · ${t.points}⚡</div>
-        <div class="manage-task-meta">
-          <span class="badge ${ab}">${al}</span>
-          <span class="badge ${t.type==='recorrente'?'badge-rec':'badge-avulso'}">${t.type==='recorrente'?'🔄 Recorrente':'📌 Avulso'}</span>
-          ${(()=>{ const c=getCategory(t); return `<span class="badge" style="background:var(--surface2);color:${c.color}">${c.emoji} ${c.label}</span>`; })()}
-          ${dayLabel}
-          ${t.reminder?.enabled?`<span class="badge" style="background:rgba(255,215,0,.12);color:var(--gold)">⏰ ${t.reminder.time}</span>`:''}
-        </div>
-      </div>
-      <div class="manage-task-btns">
-        <button class="icon-btn btn-edit" data-tid="${t.id}">✏️</button>
-        <button class="icon-btn delete btn-del" data-tid="${t.id}">🗑️</button>
-      </div>
+  const cats=getAllCategories();
+  const grouped=new Map();
+  cats.forEach(c=>grouped.set(c.id,[]));
+  sorted.forEach((t,i)=>{
+    const cid=t.category||'outros';
+    if(!grouped.has(cid)) grouped.set(cid,[]);
+    grouped.get(cid).push({t,i});
+  });
+
+  function buildDayLabel(t) {
+    if(t.type!=='recorrente') return t.date?`<span class="badge badge-ambos">${t.date}</span>`:'';
+    const mode=t.recurrenceMode||'weekly';
+    if(mode==='weekly') return t.days.length>0?`<span class="badge badge-ambos">${t.days.map(d=>DAY_SHORT[d]).join(', ')}</span>`:`<span class="badge badge-ambos">Todos os dias</span>`;
+    if(mode==='n_days') return `<span class="badge badge-ambos">A cada ${t.intervalDays||2} dias</span>`;
+    if(mode==='n_weeks') return `<span class="badge badge-ambos">A cada ${t.intervalWeeks||2} semanas${t.days.length>0?' ('+t.days.map(d=>DAY_SHORT[d]).join(', ')+')'  :''}</span>`;
+    if(mode==='monthly_day') return `<span class="badge badge-ambos">Dia ${t.monthDay||1} do m\xEAs</span>`;
+    if(mode==='12x36') return `<span class="badge badge-ambos">12x36</span>`;
+    return '';
+  }
+
+  let listHtml='';
+  cats.forEach(cat=>{
+    const items=grouped.get(cat.id);
+    if(!items||items.length===0) return;
+    listHtml+=`<div class="manage-cat-header" style="border-left-color:${cat.color}">
+      <span class="manage-cat-icon">${cat.emoji}</span>
+      <span class="manage-cat-label">${cat.label}</span>
+      <span class="manage-cat-count">${items.length}</span>
     </div>`;
-  }).join('');
+    items.forEach(({t,i})=>{
+      const ab=t.assignee==='alex'?'badge-alex':t.assignee==='ketellyn'?'badge-ket':'badge-ambos';
+      const al=t.assignee==='alex'?'💙 Alex':t.assignee==='ketellyn'?'💗 Kétellyn':'🤝 Ambos';
+      listHtml+=`<div class="manage-task-item" draggable="true" data-idx="${i}" data-tid="${t.id}">
+        <div class="drag-handle">⠿</div>
+        <div class="manage-task-info">
+          <div class="manage-task-title">${esc(t.title)} · ${t.points}⚡</div>
+          <div class="manage-task-meta">
+            <span class="badge ${ab}">${al}</span>
+            <span class="badge ${t.type==='recorrente'?'badge-rec':'badge-avulso'}">${t.type==='recorrente'?'🔄 Recorrente':'📌 Avulso'}</span>
+            ${buildDayLabel(t)}
+            ${t.reminder?.enabled?`<span class="badge" style="background:rgba(255,215,0,.12);color:var(--gold)">⏰ ${t.reminder.time}</span>`:''}
+          </div>
+        </div>
+        <div class="manage-task-btns">
+          <button class="icon-btn btn-edit" data-tid="${t.id}">✏️</button>
+          <button class="icon-btn delete btn-del" data-tid="${t.id}">🗑️</button>
+        </div>
+      </div>`;
+    });
+  });
 
   document.getElementById('manageBody').innerHTML=`
     <button class="add-task-btn" id="btnAddTask">➕ Adicionar Tarefa</button>
@@ -2402,10 +2893,19 @@ function initDragDrop() {
   });
 }
 
+function skipTask(taskId, assignee, dateStr) {
+  if(isSkipped(taskId, assignee, dateStr)) return;
+  if(!state.skips) state.skips=[];
+  state.skips.push({taskId, assignee, date:dateStr});
+  // Se estava marcada como concluída, desfaz
+  const idx=state.completions.findIndex(c=>c.taskId===taskId&&c.assignee===assignee&&c.date===dateStr);
+  if(idx>=0) state.completions.splice(idx,1);
+  saveState(); renderTab();
+}
+
 function removeTask(taskId) {
-  if(!confirm('Apagar esta tarefa e seu histórico?')) return;
+  if(!confirm('Remover esta tarefa das tarefas ativas? O histórico de completions será mantido.')) return;
   state.tasks=state.tasks.filter(t=>t.id!==taskId);
-  state.completions=state.completions.filter(c=>c.taskId!==taskId);
   saveState();renderManageBody();renderTab();
 }
 
@@ -2530,9 +3030,8 @@ function openTaskModal(taskId) {
   if(task){
     actEl.innerHTML=`<button class="btn-danger" id="btnDelEdit">🗑️ Apagar</button><button class="btn-primary" id="btnSaveTask">Salvar</button>`;
     document.getElementById('btnDelEdit').addEventListener('click',()=>{
-      if(!confirm('Apagar esta tarefa?')) return;
+      if(!confirm('Remover esta tarefa das tarefas ativas? O histórico de completions será mantido.')) return;
       state.tasks=state.tasks.filter(t=>t.id!==editId);
-      state.completions=state.completions.filter(c=>c.taskId!==editId);
       saveState();closeTaskModal();renderManageBody();renderTab();
     });
   } else {
